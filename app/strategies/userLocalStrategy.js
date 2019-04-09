@@ -1,7 +1,7 @@
 const User = require('./../models/User');
 
-const strategy = function(email, password, done) {
-    User.getUserByEmail(email, function(err, user){
+const strategy = (email, password, done) => {
+    User.findOne({ email }, (err, user) => {
         if (err) {
             throw err;
         }
@@ -9,7 +9,9 @@ const strategy = function(email, password, done) {
             return done(null, false, {message: 'Unknown User'});
         }
         User.comparePassword(password, user.password, function(err, isMatch){
-            if(err) throw err;
+            if(err) {
+              throw err;
+            }
             if(isMatch){
                 return done(null, user);
             } else {

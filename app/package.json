@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "./node_modules/nodemon/bin/nodemon ./bin/www"
+    "start": "./node_modules/nodemon/bin/nodemon ./bin/www",
+    "test": "jest --env=node --colors --verbose"
   },
   "dependencies": {
     "bcrypt": "^3.0.5",
@@ -29,6 +30,9 @@
   },
   "devDependencies": {
     "eslint": "^5.16.0",
-    "eslint-config-airbnb": "^17.1.0"
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-jest": "^22.4.1",
+    "jest": "^24.7.1",
+    "supertest": "^4.0.2"
   }
 }

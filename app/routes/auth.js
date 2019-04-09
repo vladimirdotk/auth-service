@@ -7,6 +7,14 @@ router.get('/signin', (req, res) => {
     res.render('signin');
 });
 
+router.post(
+  '/signin',
+  passport.authenticate('local', {failureRedirect: '/auth/signin'}),
+  (req, res) => {
+    res.end(`user.id: ${req.user.id}`)
+  }
+);
+
 router.get('/signup', (req, res) => {
     res.render('signup');
 });
@@ -24,8 +32,9 @@ router.post('/signup', (req, res) => {
         User.createUser(newUser, (err, user) => {
             if (err) {
                 res.status(500).send();
+            } else {
+              res.send(user).end();
             }
-            res.send(user).end();
         });
     } else {
         res.status(500).send("{errors: \"Passwords don't match\"}").end();
@@ -57,6 +66,14 @@ router.get(
         res.redirect('/')
     }
 );
+
+router.get('/test', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.end('auth');
+  } else {
+    res.end('no auth');
+  }
+})
 
 
 module.exports = router;

@@ -8,7 +8,10 @@ const logger = require('morgan');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const passportLocal =  require('passport-local');
-const userStrategy = require('./strategies/userLocalStrategy');
+const passportGithub = require('passport-github2');
+const userLocalStrategy = require('./strategies/userLocalStrategy');
+const userGithubStrategy = require('./strategies/userGithubStrategy');
+const userSerializer = require('./serializers/userSerializer');
 
 const MongoStore = require('connect-mongo')(session);
 
@@ -39,9 +42,17 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+passport.serializeUser(userSerializer.serialize);
+passport.deserializeUser(userSerializer.deserialize);
+
 passport.use(new passportLocal.Strategy(
-    userStrategy.settings,
-    userStrategy.strategy
+    userLocalStrategy.settings,
+    userLocalStrategy.strategy
+));
+
+passport.use(new passportGithub.Strategy(
+    userGithubStrategy.settings,
+    userGithubStrategy.strategy
 ));
 
 app.use(express.static(path.join(__dirname, 'public')));

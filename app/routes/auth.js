@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User.js');
-
+const passport = require('passport');
 
 router.get('/signin', (req, res) => {
     res.render('signin');
@@ -21,7 +21,6 @@ router.post('/signup', (req, res) => {
             email: req.body.email,
             password: req.body.password
         });
-
         User.createUser(newUser, (err, user) => {
             if (err) {
                 throw err;
@@ -33,5 +32,16 @@ router.post('/signup', (req, res) => {
     }
 });
 
+router.get(
+    '/github',
+    passport.authenticate('github',{ scope: [ 'user:email' ] }),
+    (req, res) => res.end('github')
+);
+
+router.get(
+    '/github/callback',
+    passport.authenticate('github', { failureRedirect: '/auth/signup' }),
+    (req, res) => res.redirect('/')
+);
 
 module.exports = router;

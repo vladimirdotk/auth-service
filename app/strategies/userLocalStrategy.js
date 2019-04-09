@@ -1,7 +1,7 @@
 const User = require('./../models/User');
 
-const strategy = function(username, password, done) {
-    User.getUserByUsername(username, function(err, user){
+const strategy = function(email, password, done) {
+    User.getUserByEmail(email, function(err, user){
         if (err) {
             throw err;
         }

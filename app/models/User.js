@@ -9,19 +9,13 @@ const User = new Schema({
         unique: true
     },
     password: String,
-    google: {
-        id: String,
-        name: String,
-        email: String
-    },
-    github: {
-        id: String,
-        name: String,
-        email: String
-    }
+    githubId: String,
+    googleId: String
 }, { timestamps: true });
 
-User.methods.createUser = (newUser, callback) => {
+module.exports = mongoose.model('User', User);
+
+module.exports.createUser = (newUser, callback) => {
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
             newUser.password = hash;
@@ -30,15 +24,11 @@ User.methods.createUser = (newUser, callback) => {
     });
 };
 
-User.methods.getUserById = (id, callback) => {
-    User.findById(id, callback);
-};
-
-User.methods.getUserByEmail = (email, callback) => {
+module.exports.getUserByEmail = (email, callback) => {
     User.findOne({email: email}, callback);
 };
 
-User.methods.comparePassword = (candidatePassword, hash, callback) => {
+module.exports.comparePassword = (candidatePassword, hash, callback) => {
     bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
         if(err) {
             throw err;
@@ -46,5 +36,3 @@ User.methods.comparePassword = (candidatePassword, hash, callback) => {
         callback(null, isMatch);
     });
 };
-
-module.exports = mongoose.model('User', User);

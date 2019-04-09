@@ -9,8 +9,10 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const passportLocal =  require('passport-local');
 const passportGithub = require('passport-github2');
+const passportGoogle = require('passport-google-oauth20');
 const userLocalStrategy = require('./strategies/userLocalStrategy');
 const userGithubStrategy = require('./strategies/userGithubStrategy');
+const userGoogleStrategy = require('./strategies/userGoogleStrategy');
 const userSerializer = require('./serializers/userSerializer');
 
 const MongoStore = require('connect-mongo')(session);
@@ -53,6 +55,11 @@ passport.use(new passportLocal.Strategy(
 passport.use(new passportGithub.Strategy(
     userGithubStrategy.settings,
     userGithubStrategy.strategy
+));
+
+passport.use(new passportGoogle.Strategy(
+   userGoogleStrategy.settings,
+   userGoogleStrategy.strategy
 ));
 
 app.use(express.static(path.join(__dirname, 'public')));

@@ -8,12 +8,11 @@ const logger = require('morgan');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const passportLocal =  require('passport-local');
-const userStrategy = require('./strategies/userStrategy');
+const userStrategy = require('./strategies/userLocalStrategy');
 
 const MongoStore = require('connect-mongo')(session);
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 
 const app = express();
@@ -39,6 +38,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
 passport.use(new passportLocal.Strategy(
     userStrategy.settings,
     userStrategy.strategy
@@ -48,7 +48,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
-app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

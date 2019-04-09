@@ -9,7 +9,6 @@ const User = new Schema({
         unique: true
     },
     password: String,
-    username: String,
     google: {
         id: String,
         name: String,

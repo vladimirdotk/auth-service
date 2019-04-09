@@ -23,7 +23,7 @@ router.post('/signup', (req, res) => {
         });
         User.createUser(newUser, (err, user) => {
             if (err) {
-                throw err;
+                res.status(500).send();
             }
             res.send(user).end();
         });
@@ -35,7 +35,6 @@ router.post('/signup', (req, res) => {
 router.get(
     '/github',
     passport.authenticate('github',{ scope: [ 'user:email' ] }),
-    (req, res) => res.end('github')
 );
 
 router.get(
@@ -58,7 +57,6 @@ router.get(
         res.redirect('/')
     }
 );
-
 
 
 module.exports = router;

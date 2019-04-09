@@ -8,11 +8,11 @@ router.get('/signin', (req, res) => {
 });
 
 router.post(
-  '/signin',
-  passport.authenticate('local', {failureRedirect: '/auth/signin'}),
-  (req, res) => {
-    res.end(`user.id: ${req.user.id}`)
-  }
+    '/signin',
+    passport.authenticate('local', { failureRedirect: '/auth/signin' }),
+    (req, res) => {
+        res.end(`Succsess! user.id: ${req.user.id}`)
+    }
 );
 
 router.get('/signup', (req, res) => {
@@ -20,10 +20,7 @@ router.get('/signup', (req, res) => {
 });
 
 router.post('/signup', (req, res) => {
-    const password = req.body.password;
-    const password2 = req.body.password2;
-
-    if (password === password2) {
+    if (req.body.password === req.body.password2) {
         const newUser = new User({
             name: req.body.name,
             email: req.body.email,
@@ -31,49 +28,41 @@ router.post('/signup', (req, res) => {
         });
         User.createUser(newUser, (err, user) => {
             if (err) {
-                res.status(500).send();
-            } else {
-              res.send(user).end();
+                return res.status(500).send();
             }
+
+            return res.end(`Succsess! user.id: ${user.id}`);
         });
     } else {
-        res.status(500).send("{errors: \"Passwords don't match\"}").end();
+        return res.status(400)
+            .send("{errors: \"Passwords don't match\"}")
+            .end();
     }
 });
 
 router.get(
     '/github',
-    passport.authenticate('github',{ scope: [ 'user:email' ] }),
+    passport.authenticate('github', { scope: ['user:email'] }),
 );
 
 router.get(
     '/github/callback',
     passport.authenticate('github', { failureRedirect: '/auth/signup' }),
-    (req, res) => {
-        res.redirect('/')
-    }
+    (req, res) => res.send('Success!')
 );
 
 router.get(
     '/google',
-    passport.authenticate('google',{ scope: [ 'profile', 'email' ] })
+    passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
 router.get(
     '/google/callback',
     passport.authenticate('google', { failureRedirect: '/auth/signup' }),
-    (req, res) => {
-        res.redirect('/')
-    }
+    (req, res) => res.send('Success!')
 );
 
-router.get('/test', (req, res) => {
-  if (req.isAuthenticated()) {
-    res.end('auth');
-  } else {
-    res.end('no auth');
-  }
-})
+router.get('/test', (req, res) => req.isAuthenticated() ? res.end('auth') : res.end('no auth'));
 
 
 module.exports = router;

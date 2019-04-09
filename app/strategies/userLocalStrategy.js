@@ -10,7 +10,7 @@ const strategy = (email, password, done) => {
         }
         User.comparePassword(password, user.password, function(err, isMatch){
             if(err) {
-              throw err;
+                throw err;
             }
             if(isMatch){
                 return done(null, user);

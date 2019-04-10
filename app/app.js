@@ -6,13 +6,16 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+
 const passport = require('passport');
 const passportLocal = require('passport-local');
 const passportGithub = require('passport-github2');
 const passportGoogle = require('passport-google-oauth20');
+
 const userLocalStrategy = require('./strategies/userLocalStrategy');
 const userGithubStrategy = require('./strategies/userGithubStrategy');
 const userGoogleStrategy = require('./strategies/userGoogleStrategy');
+
 const userSerializer = require('./serializers/userSerializer');
 
 const MongoStore = require('connect-mongo')(session);
@@ -20,6 +23,7 @@ const MongoStore = require('connect-mongo')(session);
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const roleRouter = require('./routes/role');
+const userRouter = require('./routes/user');
 
 const app = express();
 
@@ -69,6 +73,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/roles', roleRouter);
+app.use('/users', userRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

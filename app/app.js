@@ -19,6 +19,7 @@ const MongoStore = require('connect-mongo')(session);
 
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
+const roleRouter = require('./routes/role');
 
 const app = express();
 
@@ -64,8 +65,10 @@ passport.use(new passportGoogle.Strategy(
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+/* Routers */
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
+app.use('/roles', roleRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

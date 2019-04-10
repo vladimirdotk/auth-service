@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+const Role = require('./Role');
+
 const Schema = mongoose.Schema;
 
 const User = new Schema({
@@ -10,7 +12,8 @@ const User = new Schema({
     },
     password: String,
     githubId: String,
-    googleId: String
+    googleId: String,
+    roles: [{ type: mongoose.Schema.Types.ObjectId, ref: Role }],
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', User);

@@ -29,7 +29,11 @@ const userRouter = require('./routes/user');
 
 const app = express();
 
-mongoose.connect('mongodb://app-user:app-password@localhost:27017/appdb', { useNewUrlParser: true });
+const { env } = process;
+
+const mongoConnectionString = `mongodb://${env.MONGO_USER}:${env.MONGO_PASSWORD}@${env.MONGO_HOST}:${env.MONGO_PORT}/${env.MONGO_DB}`;
+
+mongoose.connect(mongoConnectionString, { useNewUrlParser: true });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -42,7 +46,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(session({
-    secret: 'my-secret',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     store: new MongoStore({ mongooseConnection: mongoose.connection })

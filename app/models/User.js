@@ -6,6 +6,7 @@ const Role = require('./Role');
 const Schema = mongoose.Schema;
 
 const User = new Schema({
+    name: String,
     email: {
         type: String,
         unique: true
@@ -14,7 +15,21 @@ const User = new Schema({
     githubId: String,
     googleId: String,
     roles: [{ type: mongoose.Schema.Types.ObjectId, ref: Role }],
+    confirmCode: String
 }, { timestamps: true });
+
+if (!User.options.toJSON) {
+    User.options.toJSON = {};
+}
+
+User.options.toJSON.transform = (doc, ret) => {
+    return {
+        _id: ret._id,
+        name: ret.name,
+        email: ret.email,
+        roles: ret.roles
+    }
+}
 
 module.exports = mongoose.model('User', User);
 

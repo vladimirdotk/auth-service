@@ -1,56 +1,125 @@
 const express = require('express');
-const router = express.Router();
+const url = require('url');
+const utils = require('./../utils');
 const User = require('./../models/User');
 
-router.get('/:userId/roles', (req, res) => {
-    User.findById(req.params.userId)
-        .then((user) => res.json({ userId: user._id, roles: user.roles }))
-        .catch(() => res.status(400).json({ message: "failed to get user roles" }))
+const router = express.Router();
+
+/* Get roles */
+router.get('/:userId/roles', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        res.json({ userId: user._id, roles: user.roles })
+    } catch (err) {
+        res.status(400).json({ message: "failed to get user roles" })
+    }
 });
 
-router.post('/:userId/roles/:roleId', (req, res) => {
-    User.findById({ _id: req.params.userId })
-        .then(user => user)
-        .catch(err => {
-            console.log(`Error geting user with id ${req.params.userId}: ${err}`);
-            return res.status(404).json({ message: "failed to get user" });
-        })
-        .then(user => {
-            const { roles } = user;
-            const roleIds = roles.map(role => role.toString());
-            roleIds.push(req.params.roleId);
-            user.roles = [...new Set(roleIds)];
-            return user.save()
-        })
-        .then(user => {
-            return res.json({ userId: user._id, roles: user.roles })
-        })
-        .catch(err => {
-            console.log(`Error saving user with id ${req.params.id}: ${err}`)
-            return res.status(500).json({ message: "failed to set user role" })
-        })
+/* Add role */
+router.post('/:userId/roles/:roleId', async (req, res) => {
+    try {
+        const user = await User.findById({ _id: req.params.userId });
+    } catch(err) {
+        console.log(`Error geting user with id ${req.params.userId}: ${err}`);
+        return res.status(404).json({ message: "failed to get user" });
+    }
+
+    const roleIds = user.roles.map(role => role.toString());
+    roleIds.push(req.params.roleId);
+    user.roles = [...new Set(roleIds)];
+    
+    try {
+        await user.save();
+    } catch (err) {
+        console.log(`Error saving user with id ${req.params.id}: ${err}`)
+        return res.status(500).json({ message: "failed to set user role" })
+    }
+
+    return res.json({ userId: user._id, roles: user.roles });
 });
 
-router.delete('/:userId/roles/:roleId', (req, res) => {
-    User.findById({ _id: req.params.userId })
-        .then(user => user)
-        .catch(err => {
-            console.log(`Error geting user with id ${req.params.userId}: ${err}`);
-            return res.status(404).json({ message: "failed to get user" });
-        })
-        .then(user => {
-            user.roles = user.roles
-                .map(role => role.toString())
-                .filter(roleId => roleId != req.params.roleId)
-            return user.save()
-        })
-        .then(user => {
-            return res.json({ userId: user._id, roles: user.roles })
-        })
-        .catch(err => {
-            console.log(`Error saving user with id ${req.params.id}: ${err}`)
-            return res.status(500).json({ message: "failed to set user role" })
-        })
+/* Delete role */
+router.delete('/:userId/roles/:roleId', async (req, res) => {
+    try {
+        const user = await User.findById({ _id: req.params.userId });
+    } catch(err) {
+        console.log(`Error geting user with id ${req.params.userId}: ${err}`);
+        return res.status(404).json({ message: "failed to get user" });
+    }
+
+    user.roles = user.roles
+        .filter(role => role.toString() != req.params.roleId);
+
+    try {
+        await user.save();
+    } catch (err) {
+        console.log(`Error saving user with id ${req.params.id}: ${err}`);
+        return res.status(500).json({ message: "failed to delete user role" });
+    }
+
+    return res.json({ userId: user._id, roles: user.roles });
 });
+
+/* Change user data */
+router.patch('/:userId', async (req, res) => {
+    try {
+        const user = await User.findById({ _id: req.params.userId });
+    } catch (err) {
+        console.log(`Error geting user with id ${req.params.userId}: ${err}`);
+        return res.status(404).json({ message: "failed to get user" });
+    }
+
+    const confirmCode = utils.getRandomName();
+
+    user.confirmCode = confirmCode;
+
+    try {
+        await user.save();
+    } catch (err) {
+        console.log(`Error saving user with id ${req.params.userId}: ${err}`);
+        return res.status(500).json({ message: "failed to change user data" });
+    }
+
+    const confirmUrl = url.format({
+        protocol: req.protocol,
+        hostname: req.hostname,
+        port: req.socket.localPort,
+        pathname: `/users/${req.params.userId}/confirm-changes`,
+        query: Object.assign(
+            req.body,
+            { code: utils.getRandomName() }
+        )
+    });
+
+    /* TODO: send via email */
+    res.json({ url: confirmUrl });
+});
+
+/* Confirm user data changes */
+router.get('/:userId/confirm-changes', async (req, res) => {
+    try {
+        const user = await User.findById({ _id: req.params.userId });
+        const code = user.confirmCode;
+    } catch(err) {
+        console.log(`Error geting user with id ${req.params.userId}: ${err}`);
+        return res.status(404).json({ message: "failed to get user" });
+    }
+
+    if (user.confirmCode === req.query.confirmCode) {
+        for (const prop in Object.assign(req.query, { confirmCode: null })) {
+            user[prop] = req.query[prop];
+        }
+    }
+
+    try {
+        await user.save();
+    } catch (err) {
+        console.log(`Error saving user with id ${req.params.userId}: ${err}`);
+        return res.status(500).json({ message: "failed to confrm user data changes" });
+    }
+
+    return res.json({ user });
+});
+
 
 module.exports = router;

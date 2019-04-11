@@ -1,14 +1,13 @@
 const User = require('./../models/User');
 
 const strategy = (accessToken, refreshToken, profile, done) => {
-    console.log(profile);
     User.findOne({googleId: profile.id}, (err, user) => {
         if (err) {
             return done(err);
         }
 
         if (!user) {
-            User.create({googleId: profile.id, email: profile.emails[0].value}, (err, googleUser) => {
+            User.create({googleId: profile.id, email: profile.emails[0].value, name: profile.name.givenName}, (err, googleUser) => {
                 if (err) {
                     return done(err);
                 }

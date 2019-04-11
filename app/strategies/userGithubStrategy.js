@@ -5,9 +5,14 @@ const strategy = (accessToken, refreshToken, profile, done) => {
         if (err) {
             return done(err);
         }
-
+    
         if (!user) {
-            User.create({githubId: profile.id, email: profile.emails[0].value}, (err, githubUser) => {
+            const userData = {
+                githubId: profile.id,
+                email: profile.emails ? profile.emails[0].value : null,
+                name: profile.displayName
+            };
+            User.create(userData, (err, githubUser) => {
                 if (err) {
                     return done(err);
                 }

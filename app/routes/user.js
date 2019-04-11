@@ -98,7 +98,7 @@ router.patch('/:userId', async (req, res) => {
         html: `<div>Please confirm user data changes: ${confirmUrl}</div>`
     };
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'production') {
         try {
             await mailer.sendMail(mailOptions);
         } catch (err) {

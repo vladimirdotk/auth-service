@@ -1,4 +1,6 @@
 .idea/
 .vscode/
+.env
 app/node_modules/
 app/coverage/
+app/.env

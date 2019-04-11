@@ -23,7 +23,7 @@ const strategy = (email, password, done) => {
 
 module.exports = {
     settings: {
-        usernameField: 'email',
+        usernameField: 'name',
         passwordField: 'password'
     },
     strategy

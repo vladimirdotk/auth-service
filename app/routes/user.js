@@ -1,6 +1,7 @@
 const express = require('express');
 const url = require('url');
 const utils = require('./../utils');
+const mailer = require('./../services/mailer');
 const User = require('./../models/User');
 
 const router = express.Router();
@@ -63,15 +64,13 @@ router.delete('/:userId/roles/:roleId', async (req, res) => {
 /* Change user data */
 router.patch('/:userId', async (req, res) => {
     try {
-        const user = await User.findById({ _id: req.params.userId });
+        var user = await User.findById({ _id: req.params.userId });
     } catch (err) {
         console.log(`Error geting user with id ${req.params.userId}: ${err}`);
         return res.status(404).json({ message: "failed to get user" });
     }
 
-    const confirmCode = utils.getRandomName();
-
-    user.confirmCode = confirmCode;
+    user.confirmCode = utils.getRandomName();
 
     try {
         await user.save();
@@ -87,28 +86,46 @@ router.patch('/:userId', async (req, res) => {
         pathname: `/users/${req.params.userId}/confirm-changes`,
         query: Object.assign(
             req.body,
-            { code: utils.getRandomName() }
+            { confirmCode: user.confirmCode }
         )
     });
 
-    /* TODO: send via email */
+    const mailOptions = {
+        from: process.env.MAILER_EMAIL,
+        to: user.email,
+        subject: "Please confirm user data changes",
+        text: `Please confirm user data changes: ${confirmUrl}`,
+        html: `<div>Please confirm user data changes: ${confirmUrl}</div>`
+    };
+
+    if (process.env.NODE_ENV !== 'production') {
+        try {
+            await mailer.sendMail(mailOptions);
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({ message: "failed to change user data" }); 
+        }
+        return res.json({ message: "email sent" });
+    }
+    
     res.json({ url: confirmUrl });
 });
 
 /* Confirm user data changes */
 router.get('/:userId/confirm-changes', async (req, res) => {
     try {
-        const user = await User.findById({ _id: req.params.userId });
-        const code = user.confirmCode;
+        var user = await User.findById({ _id: req.params.userId });
     } catch(err) {
         console.log(`Error geting user with id ${req.params.userId}: ${err}`);
         return res.status(404).json({ message: "failed to get user" });
     }
 
-    if (user.confirmCode === req.query.confirmCode) {
-        for (const prop in Object.assign(req.query, { confirmCode: null })) {
-            user[prop] = req.query[prop];
-        }
+    if (user.confirmCode !== req.query.confirmCode) {
+        return res.status(400).json({ message: "Bad confirmation code" });   
+    }
+
+    for (const prop in Object.assign(req.query, { confirmCode: null })) {
+        user[prop] = req.query[prop];
     }
 
     try {

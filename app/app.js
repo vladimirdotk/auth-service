@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 
+require('dotenv').config();
+
 const passport = require('passport');
 const passportLocal = require('passport-local');
 const passportGithub = require('passport-github2');

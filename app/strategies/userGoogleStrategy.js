@@ -22,9 +22,9 @@ const strategy = (accessToken, refreshToken, profile, done) => {
 
 module.exports = {
     settings: {
-        clientID: '1052167067177-0nn55gtthlcjne9a5edv5d9sl19fmc49.apps.googleusercontent.com',
-        clientSecret: 'CMuC1zqSk8rGT6XLsAeNH_IS',
-        callbackURL: "http://127.0.0.1:3000/auth/google/callback"
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: process.env.GOOGLE_CALLBACK_URL
     },
     strategy
 };

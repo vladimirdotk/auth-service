@@ -6,12 +6,71 @@ const User = require('./../models/User');
 
 const router = express.Router();
 
+/* Get users */
+router.get('/', async (req, res) => {
+    try {
+        res.json(await User.find());
+    } catch (err) {
+        console.log(`Error geting users: ${err}`);
+        return res.status(500).json({ message: "failed to get users" });
+    }
+});
+
+/* Get user by id */
+router.get('/:userId', async (req, res) => {
+    try {
+        res.json(await User.find({ _id: req.params.userId }));
+    } catch (err) {
+        console.log(`Error geting user with id ${req.params.userId}: ${err}`);
+        return res.status(404).json({ message: "user not found" });
+    }
+});
+
+/* Create user */
+router.post('/', async (req, res) => {
+    const user = new User(req.body);
+    User.createUser(user, (err, newUser) => {
+        if (err) {
+            console.log(`Error creating user: ${err}`);
+            return res.status(500).json({ message: "failed to create user" });
+        }
+        res.status(201).json(newUser);
+    });
+});
+
+/* Delete user */
+router.delete('/:userId', async (req, res) => {
+    try {
+        var user = await User.findById({ _id: req.params.userId });
+    } catch (err) {
+        console.log(`Error geting user with id ${req.params.userId}: ${err}`);
+        return res.status(500).json({ message: "failed to get user" });
+    }
+
+    if (!user) {
+        return res.status(404).json({ message: "failed to get user" });
+    }
+
+    try {
+        await user.remove();
+    } catch (err) {
+        console.log(`Error deleting user: ${err}`);
+        return res.status(500).json({ message: "failed to delete user" });
+    }
+
+    return res.json({ message: "user deleted" });
+});
+
 /* Change user data */
 router.patch('/:userId', async (req, res) => {
     try {
         var user = await User.findById({ _id: req.params.userId });
     } catch (err) {
         console.log(`Error geting user with id ${req.params.userId}: ${err}`);
+        return res.status(500).json({ message: "failed to get user" });
+    }
+
+    if (!user) {
         return res.status(404).json({ message: "failed to get user" });
     }
 

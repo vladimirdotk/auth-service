@@ -15,8 +15,10 @@ router.get('/user/:userId/roles', async (req, res) => {
 
 /* Add role */
 router.post('/user/:userId/role/:roleId', async (req, res) => {
+    let user;
+
     try {
-        const user = await User.findById({ _id: req.params.userId });
+        user = await User.findById({ _id: req.params.userId });
     } catch(err) {
         console.log(`Error geting user with id ${req.params.userId}: ${err}`);
         return res.status(404).json({ message: "failed to get user" });
@@ -38,8 +40,10 @@ router.post('/user/:userId/role/:roleId', async (req, res) => {
 
 /* Delete role */
 router.delete('/user/:userId/role/:roleId', async (req, res) => {
+    let user;
+
     try {
-        const user = await User.findById({ _id: req.params.userId });
+        user = await User.findById({ _id: req.params.userId });
     } catch(err) {
         console.log(`Error geting user with id ${req.params.userId}: ${err}`);
         return res.status(404).json({ message: "failed to get user" });

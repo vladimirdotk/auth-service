@@ -40,15 +40,17 @@ router.post('/', async (req, res) => {
 
 /* Delete user */
 router.delete('/:userId', async (req, res) => {
+    let user;
+
     try {
-        var user = await User.findById({ _id: req.params.userId });
+        user = await User.findById({ _id: req.params.userId });
     } catch (err) {
         console.log(`Error geting user with id ${req.params.userId}: ${err}`);
         return res.status(500).json({ message: "failed to get user" });
     }
 
     if (!user) {
-        return res.status(404).json({ message: "failed to get user" });
+        return res.status(404).json({ message: "user not found" });
     }
 
     try {
@@ -63,15 +65,17 @@ router.delete('/:userId', async (req, res) => {
 
 /* Change user data */
 router.patch('/:userId', async (req, res) => {
+    let user;
+
     try {
-        var user = await User.findById({ _id: req.params.userId });
+        user = await User.findById({ _id: req.params.userId });
     } catch (err) {
         console.log(`Error geting user with id ${req.params.userId}: ${err}`);
         return res.status(500).json({ message: "failed to get user" });
     }
 
     if (!user) {
-        return res.status(404).json({ message: "failed to get user" });
+        return res.status(404).json({ message: "user not found" });
     }
 
     user.confirmCode = utils.getRandomName();
@@ -88,10 +92,7 @@ router.patch('/:userId', async (req, res) => {
         hostname: req.hostname,
         port: req.socket.localPort,
         pathname: `/users/${req.params.userId}/confirm-changes`,
-        query: Object.assign(
-            req.body,
-            { confirmCode: user.confirmCode }
-        )
+        query: Object.assign(req.body, { confirmCode: user.confirmCode })
     });
 
     const mailOptions = {
@@ -117,11 +118,17 @@ router.patch('/:userId', async (req, res) => {
 
 /* Confirm user data changes */
 router.get('/:userId/confirm-changes', async (req, res) => {
+    let user;
+
     try {
-        var user = await User.findById({ _id: req.params.userId });
+        user = await User.findById({ _id: req.params.userId });
     } catch(err) {
         console.log(`Error geting user with id ${req.params.userId}: ${err}`);
-        return res.status(404).json({ message: "failed to get user" });
+        return res.status(500).json({ message: "failed to get user" });
+    }
+
+    if (!user) {
+        return res.status(404).json({ message: "user not found" });
     }
 
     if (user.confirmCode !== req.query.confirmCode) {

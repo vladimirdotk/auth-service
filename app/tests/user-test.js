@@ -11,20 +11,19 @@ describe('User', () => {
         const email = utils.getRandomName() + '@test.ru';
         const password = utils.getRandomName();
 
-        User.createUser(new User({ name, email, password }), async (err, newUser) => {
-            const response = await request(app)
-                .get('/users')
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(200);
-        
-            const users = JSON.parse(response.text);
-            const usersFiltered = users.filter(user => user.name === newUser.name)
+        const newUser = await User.createUser({ name, email, password });
+        const response = await request(app)
+            .get('/users')
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200);
 
-            expect(usersFiltered.length).toEqual(1);
-            
-            await User.findByIdAndRemove({ _id: newUser._id });
-        });
+        const users = JSON.parse(response.text);
+        const usersFiltered = users.filter(user => user.name === newUser.name)
+
+        expect(usersFiltered.length).toEqual(1);
+        
+        await User.findByIdAndRemove({ _id: newUser._id });
     });
 
     it('fetches user by id', async () => {
@@ -32,19 +31,18 @@ describe('User', () => {
         const email = utils.getRandomName() + '@test.ru';
         const password = utils.getRandomName();
 
-        User.createUser(new User({ name, email, password }), async (err, newUser) => {
-            
-            const response = await request(app)
-                .get(`/users/${newUser._id}`)
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(200);
+        const newUser = await User.createUser({ name, email, password });
+
+        const response = await request(app)
+            .get(`/users/${newUser._id}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200);
+
+        const user = JSON.parse(response.text);
+        expect(user.name).toEqual(newUser.name);
         
-            const user = JSON.parse(response.text);
-            expect(user._id).toEqual(newUser._id);
-            
-            await User.findByIdAndRemove({ _id: newUser._id });
-        });
+        await User.findByIdAndRemove({ _id: newUser._id });
     });
 
     it('creates user', async () => {
@@ -71,16 +69,15 @@ describe('User', () => {
         const email = utils.getRandomName() + '@test.ru';
         const password = utils.getRandomName();
 
-        User.createUser(new User({ name, email, password }), async (err, newUser) => {
-            const response = await request(app)
-                .delete(`/users/${newUser._id}`)
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(200)
-                .expect('{"message":"user deleted"}')
-                
-            await User.findByIdAndRemove({ _id: newUser._id });
-        });
+        const newUser = await User.createUser({ name, email, password });
+        await request(app)
+            .delete(`/users/${newUser._id}`)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .expect('{"message":"user deleted"}')
+        
+        await User.findByIdAndRemove({ _id: newUser._id });
     });
 
     afterAll( async () =>{

@@ -33,11 +33,15 @@ User.options.toJSON.transform = (doc, ret) => {
 
 module.exports = mongoose.model('User', User);
 
-module.exports.createUser = (newUser, callback) => {
-    bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(newUser.password, salt, (err, hash) => {
-            newUser.password = hash;
-            newUser.save(callback);
+module.exports.createUser = function(userData) {
+    return new Promise((resolve, reject) => {
+        bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(userData.password, salt, (err, hash) => {
+                userData.password = hash;
+                this.create(userData)
+                    .then(user => resolve(user))
+                    .catch(err => reject(err));
+            });
         });
     });
 };

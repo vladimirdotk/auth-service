@@ -28,14 +28,13 @@ router.get('/:userId', async (req, res) => {
 
 /* Create user */
 router.post('/', async (req, res) => {
-    const user = new User(req.body);
-    User.createUser(user, (err, newUser) => {
-        if (err) {
-            console.log(`Error creating user: ${err}`);
-            return res.status(500).json({ message: "failed to create user" });
-        }
-        res.status(201).json(newUser);
-    });
+    try {
+        const user = await User.createUser(req.body);
+        res.status(201).json(user);
+    } catch (err) {
+        console.log(`Error creating user: ${err}`);
+        return res.status(500).json({ message: "failed to create user" });
+    }
 });
 
 /* Delete user */

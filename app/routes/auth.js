@@ -19,25 +19,21 @@ router.get('/signup', (req, res) => {
     res.render('signup');
 });
 
-router.post('/signup', (req, res) => {
-    if (req.body.password === req.body.password2) {
-        const newUser = new User({
-            name: req.body.name,
-            email: req.body.email,
-            password: req.body.password
-        });
-        User.createUser(newUser, (err, user) => {
-            if (err) {
-                return res.status(500).send();
-            }
-
+router.post('/signup', async (req, res) => {
+    const { name, email, password, password2 } = req.body;
+    
+    if (password === password2) {
+        try {
+            const user = await User.createUser({name, email, password});
             return res.end(`Succsess! user.id: ${user.id}`);
-        });
-    } else {
-        return res.status(400)
-            .send("{errors: \"Passwords don't match\"}")
-            .end();
+        } catch (err) {
+            return res.status(500).send();
+        }
     }
+
+    return res.status(400)
+        .send("{errors: \"Passwords don't match\"}")
+        .end();
 });
 
 router.get(

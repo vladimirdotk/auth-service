@@ -20,7 +20,7 @@ describe('User Roles', () => {
             await newRole.save();
         
             const response = await request(app)
-                .get(`/users/${newUser._id}`)
+                .get(`/user-roles/user/${newUser._id}/roles`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200);
@@ -44,7 +44,7 @@ describe('User Roles', () => {
 
         User.createUser(new User({ name, email, password }), async (err, newUser) => {
             const response = await request(app)
-                .post(`/users/${newUser._id}/roles/${newRole._id}`)
+                .post(`/user-roles/user/${newUser._id}/role/${newRole._id}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200);
@@ -73,7 +73,7 @@ describe('User Roles', () => {
             await newRole.save();
 
             const response = await request(app)
-                .delete(`/users/${newUser._id}/roles/${newRole._id}`)
+                .delete(`/user-roles/user/${newUser._id}/role/${newRole._id}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200);

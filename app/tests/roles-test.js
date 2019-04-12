@@ -1,14 +1,13 @@
 const app = require('./../app');
 const request = require('supertest');
 const mongoose = require('mongoose');
+const helper = require('./helper');
 const utils = require('./../utils');
-const Role = require('./../models/Role');
 
 describe('/roles', () => {
     
     it('fetches roles list', async () => {
-        const name = utils.getRandomName()
-        const newRole = await Role.create({ name });
+        const newRole = await helper.createRole();
         const response = await request(app)
             .get('/roles')
             .set('Accept', 'application/json')
@@ -18,7 +17,7 @@ describe('/roles', () => {
         expect(
             roles.some(role => role.name === newRole.name)
         ).toBeTruthy();
-        await Role.findByIdAndRemove({ _id: newRole._id });
+        await helper.deleteRole(newRole._id);
     });
 
     it('adds new role', async () => {
@@ -31,18 +30,18 @@ describe('/roles', () => {
             .expect(201);
         const role = JSON.parse(response.text);
         expect(role.name).toEqual(name);
-        await Role.findByIdAndRemove({ _id: role._id });
+        await helper.deleteRole(role._id);
     });
 
     it('deletes a role', async () => {
-        const name = utils.getRandomName();
-        const newRole = await Role.create({ name });
-        const response = await request(app)
+        const newRole = await helper.createRole();
+        await request(app)
             .delete(`/roles/${newRole._id}`)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .expect(200)
             .expect('{"message":"success"}')
+        await helper.deleteRole(newRole._id);
     });
 
     afterAll( async () =>{

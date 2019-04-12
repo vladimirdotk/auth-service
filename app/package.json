@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "DEBUG=app:* ./node_modules/nodemon/bin/nodemon.js --inspect ./bin/www",
-    "test": "jest --env=node --colors --verbose"
+    "dev": "DEBUG=app:* ./node_modules/nodemon/bin/nodemon.js --inspect ./bin/www",
+    "test": "jest --env=node --colors --verbose --coverage"
   },
   "dependencies": {
     "bcrypt": "^3.0.5",

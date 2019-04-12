@@ -2,6 +2,31 @@ version: '3.1'
 
 services:
 
+  app:
+    build: .
+    restart: always
+    working_dir: /usr/src/app
+    volumes:
+      - ./app:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3000:3000
+    command: "npm run dev"
+    depends_on:
+      - mongo
+  
+  app-test:
+    build: .
+    restart: always
+    volumes:
+      - ./app:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3000:3000
+    command: "npm run test"
+    depends_on:
+      - mongo
+
   mongo:
     image: mongo
     restart: always
@@ -22,3 +47,5 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: user
       ME_CONFIG_MONGODB_ADMINPASSWORD: password
+    depends_on:
+      - mongo

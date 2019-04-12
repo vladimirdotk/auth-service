@@ -1,23 +1,27 @@
 const User = require('./../models/User');
 
-const strategy = (accessToken, refreshToken, profile, done) => {
-    User.findOne({googleId: profile.id}, (err, user) => {
-        if (err) {
+const strategy = async (accessToken, refreshToken, profile, done) => {
+    let user;
+    try {
+        user = await User.findOne({ googleId: profile.id });
+    } catch (err) {
+        return done(err);
+    }
+
+    if (!user) {
+        try {
+            const googleUser = await User.create({
+                googleId: profile.id,
+                email: profile.emails[0].value,
+                name: profile.name.givenName
+            });
+            return done(null, googleUser);
+        } catch(err) {
             return done(err);
         }
+    }
 
-        if (!user) {
-            User.create({googleId: profile.id, email: profile.emails[0].value, name: profile.name.givenName}, (err, googleUser) => {
-                if (err) {
-                    return done(err);
-                }
-
-                return done(null, googleUser);
-            });
-        }
-
-        return done(null, user);
-    })
+    return done(null, user);
 };
 
 module.exports = {

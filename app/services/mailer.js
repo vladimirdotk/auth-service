@@ -8,18 +8,9 @@ const transporter = mailer.createTransport({
     }
 });
 
-const sendMail = (mailOptions) => {
-    return new Promise((resolve, reject) => {
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.log(`Error sending email: ${error}`);
-                reject('Fail to send email');
-                return;
-            }
-            console.log('Message %s sent: %s', info.messageId, info.response);
-            resolve('Success');
-        });
-    })
+const sendMail = async (mailOptions) => {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Message %s sent: %s', info.messageId, info.response);
 }
 
 module.exports = {

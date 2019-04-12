@@ -1,28 +1,29 @@
 const User = require('./../models/User');
 
-const strategy = (accessToken, refreshToken, profile, done) => {
-    User.findOne({githubId: profile.id}, (err, user) => {
-        if (err) {
+const strategy = async (accessToken, refreshToken, profile, done) => {
+    let user;
+    try {
+        user = await User.findOne({ githubId: profile.id });
+    } catch (err) {
+        return done(err);
+    }
+
+    if (!user) {
+        try {
+            const githubUser = await User.create({
+                githubId: profile.id,
+                name: profile.displayName
+            });
+            if (profile.emails) {
+                githubUser.email = profile.emails[0].value
+            } 
+            return done(null, githubUser);
+        } catch(err) {
             return done(err);
         }
-    
-        if (!user) {
-            const userData = {
-                githubId: profile.id,
-                email: profile.emails ? profile.emails[0].value : null,
-                name: profile.displayName
-            };
-            User.create(userData, (err, githubUser) => {
-                if (err) {
-                    return done(err);
-                }
+    }
 
-                return done(null, githubUser);
-            });
-        }
-
-        return done(null, user);
-    })
+    return done(null, user);
 };
 
 module.exports = {

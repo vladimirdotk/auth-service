@@ -6,7 +6,6 @@ const { validationResult } = require('express-validator/check');
 const signupValidator = require('./../validators/signup');
 
 router.post('/signup', signupValidator, async (req, res) => {
-    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -18,6 +17,7 @@ router.post('/signup', signupValidator, async (req, res) => {
         const user = await User.createUser({ name, email, password });
         return res.end(`Succsess! user.id: ${user.id}`);
     } catch (err) {
+        console.log(`Error signing up user: ${err}`)
         return res.status(500).send();
     }
 });

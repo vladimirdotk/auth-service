@@ -2,39 +2,41 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User.js');
 const passport = require('passport');
+const { validationResult } = require('express-validator/check');
+const signupValidator = require('./../validators/signup');
 
-router.get('/signin', (req, res) => {
-    res.render('signin');
+router.post('/signup', signupValidator, async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+    
+    const { name, email, password } = req.body;
+    
+    try {
+        const user = await User.createUser({ name, email, password });
+        return res.end(`Succsess! user.id: ${user.id}`);
+    } catch (err) {
+        return res.status(500).send();
+    }
 });
+
+router.get(
+    '/signup',
+    (req, res) => res.render('signup')
+);
+
+router.get(
+    '/signin',
+    (req, res) => res.render('signin')
+);
 
 router.post(
     '/signin',
     passport.authenticate('local', { failureRedirect: '/auth/signin' }),
-    (req, res) => {
-        res.end(`Succsess! user.id: ${req.user.id}`)
-    }
+    (req, res) => res.end(`Succsess! user.id: ${req.user.id}`)
 );
-
-router.get('/signup', (req, res) => {
-    res.render('signup');
-});
-
-router.post('/signup', async (req, res) => {
-    const { name, email, password, password2 } = req.body;
-    
-    if (password === password2) {
-        try {
-            const user = await User.createUser({name, email, password});
-            return res.end(`Succsess! user.id: ${user.id}`);
-        } catch (err) {
-            return res.status(500).send();
-        }
-    }
-
-    return res.status(400)
-        .send("{errors: \"Passwords don't match\"}")
-        .end();
-});
 
 router.get(
     '/github',
@@ -58,7 +60,9 @@ router.get(
     (req, res) => res.send('Success!')
 );
 
-router.get('/test', (req, res) => req.isAuthenticated() ? res.end('auth') : res.end('no auth'));
-
+router.get(
+    '/test',
+    (req, res) => req.isAuthenticated() ? res.end('auth') : res.end('no auth')
+);
 
 module.exports = router;

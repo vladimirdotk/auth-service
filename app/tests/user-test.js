@@ -2,16 +2,12 @@ const app = require('./../app');
 const request = require('supertest');
 const mongoose = require('mongoose');
 const utils = require('./../utils');
-const User = require('./../models/User');
+const helper = require('./helper');
 
 describe('User', () => {
 
     it('fethes users', async () => {
-        const name = utils.getRandomName();
-        const email = utils.getRandomName() + '@test.ru';
-        const password = utils.getRandomName();
-
-        const newUser = await User.createUser({ name, email, password });
+        const newUser = await helper.createUser();
         const response = await request(app)
             .get('/users')
             .set('Accept', 'application/json')
@@ -20,19 +16,13 @@ describe('User', () => {
 
         const users = JSON.parse(response.text);
         const usersFiltered = users.filter(user => user.name === newUser.name)
-
         expect(usersFiltered.length).toEqual(1);
         
-        await User.findByIdAndRemove({ _id: newUser._id });
+        await helper.deleteUser(newUser._id);
     });
 
     it('fetches user by id', async () => {
-        const name = utils.getRandomName();
-        const email = utils.getRandomName() + '@test.ru';
-        const password = utils.getRandomName();
-
-        const newUser = await User.createUser({ name, email, password });
-
+        const newUser = await helper.createUser();
         const response = await request(app)
             .get(`/users/${newUser._id}`)
             .set('Accept', 'application/json')
@@ -42,7 +32,7 @@ describe('User', () => {
         const user = JSON.parse(response.text);
         expect(user.name).toEqual(newUser.name);
         
-        await User.findByIdAndRemove({ _id: newUser._id });
+        await helper.deleteUser(newUser._id);
     });
 
     it('creates user', async () => {
@@ -57,19 +47,14 @@ describe('User', () => {
             .expect(201);
 
         const user = JSON.parse(response.text);
-        
         expect(user.name).toEqual(name);
         expect(user.email).toEqual(email);
     
-        await User.findByIdAndRemove({ _id: user._id });
+        await helper.deleteUser(user._id);
     });
 
     it('deletes user', async () => {
-        const name = utils.getRandomName();
-        const email = utils.getRandomName() + '@test.ru';
-        const password = utils.getRandomName();
-
-        const newUser = await User.createUser({ name, email, password });
+        const newUser = await helper.createUser();
         await request(app)
             .delete(`/users/${newUser._id}`)
             .set('Accept', 'application/json')
@@ -77,7 +62,7 @@ describe('User', () => {
             .expect(200)
             .expect('{"message":"user deleted"}')
         
-        await User.findByIdAndRemove({ _id: newUser._id });
+        await helper.deleteUser(newUser._id);
     });
 
     afterAll( async () =>{

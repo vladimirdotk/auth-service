@@ -1,8 +1,8 @@
 const app = require('./../app');
 const request = require('supertest');
 const mongoose = require('mongoose');
-const User = require('./../models/User');
 const utils = require('./../utils');
+const helper = require('./helper');
 
 describe('Sign in page', () => {
     
@@ -13,22 +13,19 @@ describe('Sign in page', () => {
     });
 
     it('signs in a user via email/password', async () => {
-        const email = utils.getRandomName() + '@test.ru';
-        const name = utils.getRandomName();
         const password = utils.getRandomName();
-        
-        const user = await User.createUser({ email, name, password });
+        const user = await helper.createUser({ password });
         const response = await request(app)
             .post('/auth/signin')
             .type('form')
             .send({
-                email,
-                password
+                email: user.email,
+                password: password
             })
             .expect(200);
         expect(response.text).toMatch(/Succsess!/);
 
-        User.findByIdAndDelete({ _id: user._id });
+        await helper.deleteUser(user._id);
     });
 
     afterAll( async () =>{

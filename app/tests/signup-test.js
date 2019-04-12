@@ -1,7 +1,7 @@
 const app = require('./../app');
 const request = require('supertest');
 const mongoose = require('mongoose');
-
+const utils = require('./../utils');
 
 describe('Sing up page', () => {
     it('renders sing up page', async () => {
@@ -11,14 +11,15 @@ describe('Sing up page', () => {
     });
 
     it('sings up a user via email/password', async () => {
+        const password = utils.getRandomName();
         const response = await request(app)
             .post('/auth/signup')
             .type('form')
             .send({
-                email: Math.random().toString(36).substring(2, 15) + '@test.ru',
-                name: 'sdfsd',
-                password: '123',
-                password2: '123'
+                email: utils.getRandomName() + '@test.ru',
+                name: utils.getRandomName(),
+                password: password,
+                password2: password
             });
         expect(response.text).toMatch(/Succsess!/);
     });

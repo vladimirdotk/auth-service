@@ -1,18 +1,13 @@
 const app = require('./../app');
-const utils = require('./../utils');
-const User = require('./../models/User');
 const request = require('supertest');
 const mongoose = require('mongoose');
 const url = require('url');
+const helper = require('./helper');
 
 describe('Change user data', () => {
     it('changes name', async () => {
-        const name = utils.getRandomName();
-        const email = utils.getRandomName() + '@test.ru';
-        const password = utils.getRandomName();
+        const user = await helper.createUser();
         const testName = 'TestName';
-        
-        const user = await User.createUser({ name, email, password });
         const response = await request(app)
             .patch(`/users/${user._id}`)
             .set('Accept', 'application/json')
@@ -32,7 +27,7 @@ describe('Change user data', () => {
         const result = JSON.parse(confirmResponse.text);
         expect(result.name).toEqual(user.testName);
 
-        await User.findByIdAndRemove({ _id: user._id });
+        await helper.deleteUser(user._id);
     });
     afterAll( async () =>{
         await mongoose.connection.close()

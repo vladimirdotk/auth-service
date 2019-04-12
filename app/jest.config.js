@@ -1,5 +1,5 @@
 module.exports = {
-    testRegex: "(/tests/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    testRegex: "/tests/.*test.js",
     testPathIgnorePatterns: ["/lib/", "/node_modules/"],
-    moduleFileExtensions: ["js", "jsx", "json", "node"]
+    moduleFileExtensions: ["js"]
 };

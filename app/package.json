@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "./node_modules/nodemon/bin/nodemon --inspect ./bin/www",
+    "start": "DEBUG=app:* ./node_modules/nodemon/bin/nodemon.js --inspect ./bin/www",
     "test": "jest --env=node --colors --verbose"
   },
   "dependencies": {

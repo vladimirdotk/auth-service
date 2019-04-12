@@ -1,18 +1,8 @@
 # Auth Service
 
-+ Выбрать инструменты и технологии для задачи.
-Express, Passport.js, Mongodb, Mongoose
+## How to start
 
-+ Реализовать несколько стратегий для аутентификации, такие как:
-login/password, google, github с сохранением сессии в куки.
-
-+ Реализовать возможность проверки авторизации по REST,
-пользователи должны иметь роли (super admin, admin, regular, manager)
-
-+ Реализовать CRUD операции над пользователями, в т.ч. смену пароля, email, c подтверждением на почту.
-
-+ Реализовать валидацию пользовательского ввода, CRUD сессий пользователя.
-
-+ Написать e2e, unit тесты
-
-+ Завернуть в docker (желательно через docker-compose), запуск тестов в отдельных контейнерах.
++ Copy `app/.env.dist` to `app/.env`
++ Change `app/.env` variables
++ Change `docker/mongo/init.js` to create proper database and user/password
++ Run `docker compose up app` for development or `docker-compose up app-test` for testing

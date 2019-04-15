@@ -21,10 +21,8 @@ const addRole = async (req, res) => {
 
 const deleteRole = async (req, res) => {
     try {
-        const role = await Role.findByIdAndRemove({ _id: req.params.roleId });
-        return role
-            ? res.json({ message: 'success' })
-            : res.status(404).json({ message: 'no role found' })
+        await Role.findByIdAndRemove({ _id: req.params.roleId });
+        res.json({ message: 'success' });
     } catch (err) {
         console.log(`Error deleting a role: ${err}`);
         res.status(500).json({ message: 'failed to delete role' });

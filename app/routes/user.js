@@ -1,7 +1,7 @@
 const express = require('express');
 const url = require('url');
 const utils = require('./../utils');
-const mailer = require('./../services/mailer');
+const mailer = require('./../components/mailer');
 const User = require('./../models/User');
 
 const router = express.Router();

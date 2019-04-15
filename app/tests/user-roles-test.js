@@ -24,46 +24,64 @@ describe('User Roles', () => {
         await helper.deleteUser(newUser._id);
     });
 
-    it('adds role to user', async () => {
-        const newRole = await helper.createRole();
-        const newUser = await helper.createUser();
-
-        const response = await request(app)
-            .post(`/user-roles/user/${newUser._id}/role/${newRole._id}`)
-            .set('Accept', 'application/json')
-            .expect('Content-Type', /json/)
-            .expect(200);
+    describe('adding role to user', function () {
+        it('adds role to user', async () => {
+            const newRole = await helper.createRole();
+            const newUser = await helper.createUser();
     
-        const result = JSON.parse(response.text);
-        result.roles.some(role => role.email === newRole.email)
-        expect(
-            result.roles.some(role => role.toString() == newRole._id)
-        ).toBeTruthy();           
+            const response = await request(app)
+                .post(`/user-roles/user/${newUser._id}/role/${newRole._id}`)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200);
         
-        await helper.deleteRole(newRole._id);
-        await helper.deleteUser(newUser._id);
-    })
-
-    it('deletes role from user', async () => {
-        const newRole = await helper.createRole();
-        const newUser = await helper.createUser({ roles: [newRole._id]});
-
-        const response = await request(app)
-            .delete(`/user-roles/user/${newUser._id}/role/${newRole._id}`)
-            .set('Accept', 'application/json')
-            .expect('Content-Type', /json/)
-            .expect(200);
-        
-        const result = JSON.parse(response.text);
-        expect(
-            result.roles
-        ).toEqual([]);           
-        
-        await helper.deleteRole(newRole._id);
-        await helper.deleteUser(newUser._id);
+            const result = JSON.parse(response.text);
+            result.roles.some(role => role.email === newRole.email)
+            expect(
+                result.roles.some(role => role.toString() == newRole._id)
+            ).toBeTruthy();           
+            
+            await helper.deleteRole(newRole._id);
+            await helper.deleteUser(newUser._id);
+        })
+        it('fails to add role to user', async () => {
+            return request(app)
+                .post('/user-roles/user/fakeUser/role/fakeRole')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(422);
+        })
     });
-
+    
+    describe('deleting role from user', async () => {
+        it('deletes role from user', async () => {
+            const newRole = await helper.createRole();
+            const newUser = await helper.createUser({ roles: [newRole._id]});
+    
+            const response = await request(app)
+                .delete(`/user-roles/user/${newUser._id}/role/${newRole._id}`)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200);
+            
+            const result = JSON.parse(response.text);
+            expect(
+                result.roles
+            ).toEqual([]);           
+            
+            await helper.deleteRole(newRole._id);
+            await helper.deleteUser(newUser._id);
+        });
+        it('fails to delete role from user', async () => {
+            return request(app)
+                .delete('/user-roles/user/fakeUser/role/fakeRole')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(422);
+        })
+    });
+    
     afterAll( async () =>{
-        await mongoose.connection.close()
+        return mongoose.connection.close()
     });
 });

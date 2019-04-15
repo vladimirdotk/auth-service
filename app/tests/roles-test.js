@@ -19,7 +19,7 @@ describe('/roles', () => {
         await helper.deleteRole(newRole._id);
     });
 
-    describe('adding new role', async () => {
+    describe('adding new role', () => {
         it('adds new role', async () => {
             const name = utils.getRandomName();
             const response = await request(app)
@@ -42,7 +42,7 @@ describe('/roles', () => {
         })
     });
 
-    describe('deleting a role', async () => {
+    describe('deleting a role', () => {
         it('deletes a role', async () => {
             const newRole = await helper.createRole();
             await request(app)

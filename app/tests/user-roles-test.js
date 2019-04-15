@@ -24,7 +24,7 @@ describe('User Roles', () => {
         await helper.deleteUser(newUser._id);
     });
 
-    describe('adding role to user', function () {
+    describe('adding role to user', () => {
         it('adds role to user', async () => {
             const newRole = await helper.createRole();
             const newUser = await helper.createUser();
@@ -53,7 +53,7 @@ describe('User Roles', () => {
         })
     });
     
-    describe('deleting role from user', async () => {
+    describe('deleting role from user', () => {
         it('deletes role from user', async () => {
             const newRole = await helper.createRole();
             const newUser = await helper.createUser({ roles: [newRole._id]});

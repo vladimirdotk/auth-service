@@ -2,15 +2,10 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User.js');
 const passport = require('passport');
-const { validationResult } = require('express-validator/check');
+const { validate } = require('./../middleware/validator');
 const signupValidator = require('./../validators/signup');
 
-router.post('/signup', signupValidator, async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
-    }
-    
+router.post('/signup', validate(signupValidator), async (req, res, next) => {
     const { name, email, password } = req.body;
     
     try {

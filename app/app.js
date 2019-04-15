@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
-const {statusCodes, getStatusText } = require('http-status-codes');
+const {INTERNAL_SERVER_ERROR, getStatusText } = require('http-status-codes');
 
 require('dotenv').config();
 
@@ -84,22 +84,27 @@ app.use('/roles', roleRouter);
 app.use('/users', userRouter);
 app.use('/user-roles', userRolesRouter);
 
-// catch 404 and forward to error handler
+/* Not Found Error */
 app.use((req, res, next) => {
     next(createError(404));
-});
+})
 
-// error handler
-app.use((err, req, res) => {
-    // set locals, only providing error in development
+/* Errors Handler */
+app.use((err, req, res, next) => {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
-    
+
+    let message;
+
+    if (req.app.get('env') === 'development') {
+        message = err.details || err.message || getStatusText(INTERNAL_SERVER_ERROR);
+    } else {
+        message = err.details || getStatusText(INTERNAL_SERVER_ERROR);
+    }
+
     res
-        .status(err.status || statusCodes.INTERNAL_SERVER_ERROR)
-        .json({
-            message: err.message || getStatusText(statusCodes.INTERNAL_SERVER_ERROR) 
-        });
+        .status(err.status || INTERNAL_SERVER_ERROR)
+        .json({ message });
 });
 
 module.exports = app;

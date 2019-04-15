@@ -38,9 +38,9 @@ describe('Sign up page', () => {
             .expect('Content-Type', /json/)
             .expect(422)
         const result = JSON.parse(response.text);
-        const { errors } = result;
-        expect(errors.length).toEqual(1);
-        expect(errors[0].param).toMatch("email");
+        const { message } = result;
+        expect(message.length).toEqual(1);
+        expect(message[0].param).toMatch("email");
     });
 
     afterAll( async () =>{

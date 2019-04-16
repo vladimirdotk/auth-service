@@ -1,31 +1,31 @@
 const Role = require('./../models/Role');
+const roleService = require('./../services/roleService');
 
-const getRoles = async (req, res) => {
+const getRoles = async (req, res, next) => {
     try {
-        res.json(await Role.find());
+        res.json(await roleService.getAll());
     } catch (err) {
         console.log(`Error getting roles: ${err}`);
-        res.status(500).json({ message: 'failed to get roles' })
+        next(err);
     }
 }
 
-const addRole = async (req, res) => {
+const addRole = async (req, res, next) => {
     try {
-        const role = await Role.create({ name: req.body.name });
-        res.status(201).json(role)
+        res.status(201).json(await Role.create({ name: req.body.name }))
     } catch (err) {
         console.log(`Error creating a role: ${err}`);
-        res.status(400).json({ message: 'failed to create a role' });
+        next(err);
     }
 }
 
-const deleteRole = async (req, res) => {
+const deleteRole = async (req, res, next) => {
     try {
-        await Role.findByIdAndRemove({ _id: req.params.roleId });
+        await roleService.remove(req.params.roleId);
         res.json({ message: 'success' });
     } catch (err) {
         console.log(`Error deleting a role: ${err}`);
-        res.status(500).json({ message: 'failed to delete role' });
+        next(err);
     }
 }
 

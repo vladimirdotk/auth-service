@@ -4,7 +4,6 @@ const session = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const logger = require('morgan');
 const mongoose = require('mongoose');
 const {INTERNAL_SERVER_ERROR, getStatusText } = require('http-status-codes');
 
@@ -29,6 +28,8 @@ const roleRouter = require('./routes/role');
 const userRouter = require('./routes/user');
 const userRolesRouter = require('./routes/user-roles');
 
+const logger = require('./components/logger');
+
 const app = express();
 
 const { env } = process;
@@ -40,8 +41,6 @@ mongoose.connect(mongoConnectionString, { useNewUrlParser: true });
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-
-app.use(logger('dev'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -94,6 +93,11 @@ app.use((err, req, res, next) => {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
+    const status = err.status || INTERNAL_SERVER_ERROR;
+    const details = err.details ? JSON.stringify(err.details) : 'none';
+
+    logger.error(`${status} - ${err.message} - ${req.method} ${req.originalUrl} - ${req.ip}. Details: ${details}`);
+
     let message;
 
     if (req.app.get('env') === 'development') {
@@ -103,7 +107,7 @@ app.use((err, req, res, next) => {
     }
 
     res
-        .status(err.status || INTERNAL_SERVER_ERROR)
+        .status(status)
         .json({ message });
 });
 

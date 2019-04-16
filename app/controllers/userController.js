@@ -1,11 +1,11 @@
-const User = require('./../models/User');
 const userService = require('./../services/userService');
+const logger = require('./../components/logger');
 
 const getUsers = async (req, res, next) => {
     try {
         res.json(await userService.getAll());
     } catch (err) {
-        console.log(`Error geting users: ${err}`);
+        logger.error(`Error geting users: ${err}`);
         next(err);
     }
 }
@@ -14,7 +14,7 @@ const getUserById = async (req, res, next) => {
     try {
         res.json(await userService.getById(req.params.userId));
     } catch (err) {
-        console.log(`Error geting user with id ${req.params.userId}: ${err}`);
+        logger.error(`Error geting user with id ${req.params.userId}: ${err}`);
         next(err);
     }
 }
@@ -24,7 +24,7 @@ const createUser = async (req, res, next) => {
         const user = await userService.create(req.body);
         res.status(201).json(user);
     } catch (err) {
-        console.log(`Error creating user: ${err}`);
+        logger.error(`Error creating user: ${err}`);
         next(err);
     }
 }
@@ -34,7 +34,7 @@ const deleteUser = async (req, res, next) => {
         await userService.removeById(req.params.userId);
         res.json({ message: "user deleted" });
     } catch (err) {
-        console.log(`Error deleting user with id ${req.params.userId}: ${err}`);
+        logger.error(`Error deleting user with id ${req.params.userId}: ${err}`);
         next(err);
     }
 }
@@ -52,7 +52,7 @@ const changeUser = async (req, res, next) => {
             ? res.json({ message: "email sent" })
             : res.json({ url: confirmUrl })
     } catch (err) {
-        console.log(`Failed to change user data: ${err}`);
+        logger.error(`Failed to change user data: ${err}`);
         next(err);
     }
 }
@@ -65,7 +65,7 @@ const confirmChanges = async (req, res, next) => {
         });
         return res.json({ user });
     } catch(err) {
-        console.log(`Error saving user with id ${req.params.userId}: ${err}`);
+        logger.error(`Error saving user with id ${req.params.userId}: ${err}`);
         next(err);
     }
 }

@@ -19,7 +19,6 @@ const strategy = async (email, password, done) => {
             return done(null, false, {message: 'Invalid password'});
         }
     } catch (err) {
-        console.log(`Error comparing password ${err}`);
         return done(err);
     }
 

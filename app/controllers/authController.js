@@ -1,13 +1,15 @@
 const User = require('./../models/User');
+const logger = require('./../components/logger');
 
 const signUp = async (req, res) => {
     const { name, email, password } = req.body;
     
     try {
         const user = await User.createUser({ name, email, password });
+        logger.debug(`Created user ${user.id}`)
         res.end(`Succsess! user.id: ${user.id}`);
     } catch (err) {
-        console.log(`Error signing up user: ${err}`)
+        logger.error(`Error signing up user ${name} ${email}: ${err}`)
         res.status(500).send();
     }
 }

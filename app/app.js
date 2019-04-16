@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const {INTERNAL_SERVER_ERROR, getStatusText } = require('http-status-codes');
+const swaggerJSDoc = require('./components/swagger');
+const swaggerUi = require('swagger-ui-express');
 
 require('dotenv').config();
 
@@ -75,6 +77,11 @@ passport.use(new passportGoogle.Strategy(
 ));
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+/* Swagger */
+if (app.get('env') !== 'production') {
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc));
+}
 
 /* Routers */
 app.use('/', indexRouter);

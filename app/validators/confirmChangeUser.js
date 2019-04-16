@@ -4,6 +4,11 @@ const User = require('./../models/User');
 const validators = [
     param('userId', 'User must exists')
         .custom(async (value) => await User.findById({ _id: value}) !== null),
+    query('confirmCode', 'Bad confirmation code')
+        .custom(async (value, { req }) => {
+            const user = await User.findById({ _id: req.params.userId });
+            return user && user.confirmCode === value
+        }),
     query('name')
         .optional()
         .isLength({min: 7, max: 50})

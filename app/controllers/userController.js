@@ -1,142 +1,73 @@
-const url = require('url');
-const utils = require('./../utils');
-const mailer = require('./../components/mailer');
 const User = require('./../models/User');
+const userService = require('./../services/userService');
 
-const getUsers = async (req, res) => {
+const getUsers = async (req, res, next) => {
     try {
-        res.json(await User.find());
+        res.json(await userService.getAll());
     } catch (err) {
         console.log(`Error geting users: ${err}`);
-        return res.status(500).json({ message: "failed to get users" });
+        next(err);
     }
 }
 
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
     try {
-        res.json(await User.findOne({ _id: req.params.userId }));
+        res.json(await userService.getById(req.params.userId));
     } catch (err) {
         console.log(`Error geting user with id ${req.params.userId}: ${err}`);
-        res.status(404).json({ message: "user not found" });
+        next(err);
     }
 }
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
     try {
-        const user = await User.createUser(req.body);
+        const user = await userService.create(req.body);
         res.status(201).json(user);
     } catch (err) {
         console.log(`Error creating user: ${err}`);
-        res.status(500).json({ message: "failed to create user" });
+        next(err);
     }
 }
 
-const deleteUser = async (req, res) => {
-    let user;
-
+const deleteUser = async (req, res, next) => {
     try {
-        user = await User.findById({ _id: req.params.userId });
+        await userService.removeById(req.params.userId);
+        res.json({ message: "user deleted" });
     } catch (err) {
-        console.log(`Error geting user with id ${req.params.userId}: ${err}`);
-        return res.status(500).json({ message: "failed to get user" });
+        console.log(`Error deleting user with id ${req.params.userId}: ${err}`);
+        next(err);
     }
-
-    if (!user) {
-        return res.status(404).json({ message: "user not found" });
-    }
-
-    try {
-        await user.remove();
-    } catch (err) {
-        console.log(`Error deleting user: ${err}`);
-        return res.status(500).json({ message: "failed to delete user" });
-    }
-
-    return res.json({ message: "user deleted" });
 }
 
-const changeUser = async (req, res) => {
-    let user;
-
+const changeUser = async (req, res, next) => {
     try {
-        user = await User.findById({ _id: req.params.userId });
+        const confirmUrl = await userService.changeUser({
+            userId: req.params.userId,
+            protocol: req.protocol,
+            hostname: req.hostname,
+            port: req.socket.localPort,
+            userData: req.body
+        });
+        return process.env.NODE_ENV === 'production'
+            ? res.json({ message: "email sent" })
+            : res.json({ url: confirmUrl })
     } catch (err) {
-        console.log(`Error geting user with id ${req.params.userId}: ${err}`);
-        return res.status(500).json({ message: "failed to get user" });
+        console.log(`Failed to change user data: ${err}`);
+        next(err);
     }
-
-    if (!user) {
-        return res.status(404).json({ message: "user not found" });
-    }
-
-    user.confirmCode = utils.getRandomName();
-
-    try {
-        await user.save();
-    } catch (err) {
-        console.log(`Error saving user with id ${req.params.userId}: ${err}`);
-        return res.status(500).json({ message: "failed to change user data" });
-    }
-
-    const confirmUrl = url.format({
-        protocol: req.protocol,
-        hostname: req.hostname,
-        port: req.socket.localPort,
-        pathname: `/users/${req.params.userId}/confirm-changes`,
-        query: Object.assign(req.body, { confirmCode: user.confirmCode })
-    });
-
-    const mailOptions = {
-        from: process.env.MAILER_EMAIL,
-        to: user.email,
-        subject: "Please confirm user data changes",
-        text: `Please confirm user data changes: ${confirmUrl}`,
-        html: `<div>Please confirm user data changes: ${confirmUrl}</div>`
-    };
-
-    if (process.env.NODE_ENV === 'production') {
-        try {
-            await mailer.sendMail(mailOptions);
-        } catch (err) {
-            console.log(err);
-            return res.status(500).json({ message: "failed to change user data" }); 
-        }
-        return res.json({ message: "email sent" });
-    }
-    
-    res.json({ url: confirmUrl });
 }
 
-const confirmChanges = async (req, res) => {
-    let user;
-
+const confirmChanges = async (req, res, next) => {
     try {
-        user = await User.findById({ _id: req.params.userId });
+        const user = await userService.confirmChanges({
+            userId: req.params.userId,
+            userData: req.query
+        });
+        return res.json({ user });
     } catch(err) {
-        console.log(`Error geting user with id ${req.params.userId}: ${err}`);
-        return res.status(500).json({ message: "failed to get user" });
-    }
-
-    if (!user) {
-        return res.status(404).json({ message: "user not found" });
-    }
-
-    if (user.confirmCode !== req.query.confirmCode) {
-        return res.status(400).json({ message: "Bad confirmation code" });   
-    }
-
-    for (const prop in Object.assign(req.query, { confirmCode: null })) {
-        user[prop] = req.query[prop];
-    }
-
-    try {
-        await user.save();
-    } catch (err) {
         console.log(`Error saving user with id ${req.params.userId}: ${err}`);
-        return res.status(500).json({ message: "failed to confrm user data changes" });
+        next(err);
     }
-
-    return res.json({ user });
 }
 
 module.exports = {

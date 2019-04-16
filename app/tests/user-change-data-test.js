@@ -14,10 +14,8 @@ describe('Change user data', () => {
             .send({ name: testName })
             .expect('Content-Type', /json/)
             .expect(200);
-            
         const confirmUrl = JSON.parse(response.text).url;
         const confirmUrlPath = url.parse(confirmUrl).path;
-        
         const confirmResponse = await request(app)
             .get(confirmUrlPath)
             .set('Accept', 'application/json')

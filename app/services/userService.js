@@ -79,5 +79,6 @@ module.exports = {
     create,
     removeById,
     changeUser,
-    confirmChanges
+    confirmChanges,
+    checkUser
 }

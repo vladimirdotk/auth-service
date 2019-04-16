@@ -6,8 +6,8 @@ const manipulateUserRoleValidator = require('./../validators/manipulateUserRole'
 
 const router = express.Router();
 
-router.get('/user/:userId/roles', validate(getUserRolesValidator), userRolesController.getUserRoles);
-router.post('/user/:userId/role/:roleId',validate(manipulateUserRoleValidator), userRolesController.addUserRole);
-router.delete('/user/:userId/role/:roleId', validate(manipulateUserRoleValidator), userRolesController.deleteUserRole);
+router.get('/user/:userId/roles', validate(getUserRolesValidator), userRolesController.get);
+router.post('/user/:userId/role/:roleId',validate(manipulateUserRoleValidator), userRolesController.add);
+router.delete('/user/:userId/role/:roleId', validate(manipulateUserRoleValidator), userRolesController.remove);
 
 module.exports = router;

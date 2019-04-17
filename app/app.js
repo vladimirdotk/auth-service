@@ -29,6 +29,7 @@ const authRouter = require('./routes/auth');
 const roleRouter = require('./routes/role');
 const userRouter = require('./routes/user');
 const userRolesRouter = require('./routes/user-roles');
+const userSessionsRouter = require('./routes/user-sessions');
 
 const logger = require('./components/logger');
 
@@ -89,6 +90,7 @@ app.use('/auth', authRouter);
 app.use('/roles', roleRouter);
 app.use('/users', userRouter);
 app.use('/user-roles', userRolesRouter);
+app.use('/user-sessions', userSessionsRouter);
 
 /* Not Found Error */
 app.use((req, res, next) => {

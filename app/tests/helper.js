@@ -1,6 +1,7 @@
 const utils = require('./../utils');
 const Role = require('./../models/Role');
 const User = require('./../models/User');
+const Session = require('./../models/Session');
 
 const createRole = async () => {
     return await Role.create({ name: utils.getRandomName() });
@@ -23,9 +24,22 @@ const deleteUser = async (userId) => {
     await User.findByIdAndDelete({ _id: userId });
 }
 
+const createSession = async (userId) => {
+    return await Session.create({
+        expires: new Date(),
+        session: userId
+    })
+}
+
+const deleteSession = async (sessionId) => {
+    return Session.findByIdAndDelete({ _id: sessionId });
+}
+
 module.exports = {
     createRole,
     deleteRole,
     createUser,
-    deleteUser
+    deleteUser,
+    createSession,
+    deleteSession
 }

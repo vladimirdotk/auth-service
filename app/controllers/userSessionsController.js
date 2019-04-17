@@ -20,8 +20,25 @@ const getOne = async (req, res, next) => {
     }
 }
 
-const removeOne = async (req, res, next) => {}
-const removeAll = async (req, res, next) => {}
+const removeOne = async (req, res, next) => {
+    try {
+        await userSessionService.removeAll(req.params.userId, req.params.sessionId);
+        res.json({ "message" : "success" });
+    } catch (err) {
+        logger.error(`Error deleting session ${req.params.sessionId} by userId ${req.params.userId}`);
+        next(err);
+    }
+}
+
+const removeAll = async (req, res, next) => {
+    try {
+        await userSessionService.removeAll(req.params.userId);
+        res.json({ "message" : "success" });
+    } catch (err) {
+        logger.error(`Error deleting sessions by userId ${req.params.userId}`);
+        next(err);
+    }
+}
 
 module.exports = {
     getOne,

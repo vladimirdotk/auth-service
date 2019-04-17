@@ -67,7 +67,7 @@ router.get('/user/:userId/sessions', validate(userExists), userSessionController
  *          schema:
  *              type: string
  *          required: true
-  *        - in: path
+ *        - in: path
  *          name: sessionId
  *          schema:
  *              type: string
@@ -79,7 +79,64 @@ router.get('/user/:userId/sessions', validate(userExists), userSessionController
  *             $ref: '#/definitions/Session'
  */
 router.get('/user/:userId/sessions/:sessionId', validate(userSession), userSessionController.getOne);
-router.delete('/users/:userId/sessions', validate(userExists), userSessionController.removeAll);
+
+/**
+ * @swagger
+ * 
+ * /user-sessions/user/{userId}/sessions:
+ *   delete:
+ *     description: Delete user sessions
+ *     tags:
+ *       - user-sessions
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *             type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: message
+ *         schema:
+ *             type: object
+ *             properties:
+ *               message: 
+ *                  type: string
+ */
+router.delete('/user/:userId/sessions', validate(userExists), userSessionController.removeAll);
+
+/**
+ * @swagger
+ * 
+ * /user-sessions/user/{userId}/sessions/{sessionId}:
+ *   delete:
+ *     description: Delete user session
+ *     tags:
+ *       - user-sessions
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *             type: string
+ *         required: true
+ *       - in: path
+ *         name: sessionId
+ *         schema:
+ *             type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: message
+ *         schema:
+ *             type: object
+ *             properties:
+ *               message: 
+ *                  type: string
+ */
 router.delete('/user/:userId/sessions/:sessionId', validate(userSession), userSessionController.removeOne);
 
 module.exports = router;

@@ -22,7 +22,22 @@ const getOne = async (userId, sessionId) => {
     return session;
 }
 
+const removeAll = async (userId) => {
+    return await Session.deleteMany({
+        session: { $regex: new RegExp(userId) }
+    });
+}
+
+const removeOne = async (userId, sessionId) => {
+    return await Session.deleteOne({
+        _id: sessionId,
+        session: { $regex: new RegExp(userId) }
+    });
+}
+
 module.exports = {
     getAll,
-    getOne
+    getOne,
+    removeAll,
+    removeOne
 }

@@ -63,7 +63,7 @@ router.get('/', userController.getUsers);
  *        - in: path
  *          name: userId
  *          schema:
- *              type: integer
+ *              type: string
  *          required: true
  *     responses:
  *       200:
@@ -124,7 +124,7 @@ router.post('/', validate(createUserValidator), userController.createUser);
  *        - in: path
  *          name: userId
  *          schema:
- *              type: integer
+ *              type: string
  *          required: true
  *     responses:
  *       200:
@@ -151,7 +151,7 @@ router.delete('/:userId', validate(userExistsValidator), userController.deleteUs
  *        - in: path
  *          name: userId
  *          schema:
- *              type: integer
+ *              type: string
  *          required: true
  *        - in: body
  *          name: name
@@ -196,7 +196,7 @@ router.patch('/:userId', validate(changeUserValidator), userController.changeUse
  *        - in: path
  *          name: userId
  *          schema:
- *              type: integer
+ *              type: string
  *          required: true
  *        - in: query
  *          name: name

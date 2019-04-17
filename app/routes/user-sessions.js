@@ -50,6 +50,34 @@ const router = express.Router();
  *             $ref: '#/definitions/Session'
  */
 router.get('/user/:userId/sessions', validate(userExists), userSessionController.getAll);
+
+/**
+ * @swagger
+ * 
+ * /user-sessions/user/{userId}/sessions/{sessionId}:
+ *   get:
+ *     description: Get user session
+ *     tags:
+ *       - user-sessions
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *        - in: path
+ *          name: userId
+ *          schema:
+ *              type: string
+ *          required: true
+  *        - in: path
+ *          name: sessionId
+ *          schema:
+ *              type: string
+ *          required: true
+ *     responses:
+ *       200:
+ *         description: user session
+ *         schema:
+ *             $ref: '#/definitions/Session'
+ */
 router.get('/user/:userId/sessions/:sessionId', validate(userSession), userSessionController.getOne);
 router.delete('/users/:userId/sessions', validate(userExists), userSessionController.removeAll);
 router.delete('/user/:userId/sessions/:sessionId', validate(userSession), userSessionController.removeOne);

@@ -68,7 +68,7 @@ router.post('/', validate(addRoleValidator), roleController.addRole);
 /**
  * @swagger
  *
- * /roles:
+ * /roles{roleId}:
  *   delete:
  *     description: Deletes a role
  *     tags:
@@ -76,9 +76,9 @@ router.post('/', validate(addRoleValidator), roleController.addRole);
  *     produces:
  *       - application/json
  *     parameters:
- *       - _id: role
+ *       - roleId: role
  *         description: role id
- *         in:  body
+ *         in:  path
  *         required: true
  *         type: string
  *     responses:

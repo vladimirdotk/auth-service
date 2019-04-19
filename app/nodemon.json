@@ -1,0 +1,14 @@
+{
+    "watch": ["src"],
+    "exec": "node --inspect -r ts-node/register ./src/app.ts",
+    "ext": "ts",
+    "verbose": true,
+    "ignore": [
+		"node_modules",
+		"./__tests__",
+		"**/*.d.ts",
+		"*.test.ts",
+		"*.spec.ts"
+    ],
+    "inspect": true
+}

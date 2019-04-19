@@ -18,6 +18,8 @@ import * as userLocalStrategy from './strategies/userLocalStrategy';
 import * as userGithubStrategy from './strategies/userGithubStrategy';
 import * as userGoogleStrategy from './strategies/userGoogleStrategy';
 
+import { IError } from './interfaces/error';
+
 import logger from './components/logger';
 
 import { serialize, deserialize } from './serializers/userSerializer';
@@ -31,6 +33,7 @@ const app = express();
 const { env } = process;
 
 /* Mongo setup */
+// tslint:disable-next-line: max-line-length
 const mongoConnectionString = `mongodb://${env.MONGO_USER}:${env.MONGO_PASSWORD}@${env.MONGO_HOST}:${env.MONGO_PORT}/${env.MONGO_DB}`;
 mongoose.connect(mongoConnectionString, { useNewUrlParser: true });
 const mongoStore = require('connect-mongo')(session);
@@ -93,7 +96,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 /* Error Handler */
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: IError, req: Request, res: Response, next: NextFunction) => {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
@@ -103,7 +106,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 // tslint:disable-next-line: max-line-length
     logger.error(`${status} - ${err.message} - ${req.method} ${req.originalUrl} - ${req.ip}. Details: ${details}`);
 
-    let message: string;
+    let message: string | IError['details'];
 
     if (req.app.get('env') === 'development') {
         message = err.details || err.message || getStatusText(INTERNAL_SERVER_ERROR);

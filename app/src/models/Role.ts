@@ -12,4 +12,4 @@ const roleSchema = new Schema({
 // tslint:disable-next-line: align
 }, { timestamps: true });
 
-export const Role: Model<IUserModel> = model<IUserModel>('User', roleSchema);
+export const Role: Model<IUserModel> = model<IUserModel>('Role', roleSchema);

@@ -6,6 +6,8 @@
       "outDir": "dist",
       "rootDir": "src",
       "noImplicitAny": true,
-      "strictNullChecks": true
-    }
+      "strictNullChecks": true,
+      "typeRoots": [ "./src/types", "./node_modules/@types"],
+    },
+    "exclude": ["node_modules", "./src/types"]
   }

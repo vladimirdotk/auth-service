@@ -1,6 +1,6 @@
 {
     "watch": ["src"],
-    "exec": "node --inspect -r ts-node/register ./src/app.ts",
+    "exec": "node --inspect -r ts-node/register ./src/server.ts",
     "ext": "ts",
     "verbose": true,
     "ignore": [

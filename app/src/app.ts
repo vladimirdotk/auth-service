@@ -25,6 +25,7 @@ import logger from './components/logger';
 import { serialize, deserialize } from './serializers/userSerializer';
 
 import indexRouter from './routes/index';
+import authRouter from './routes/auth';
 
 dotenv.config();
 
@@ -89,6 +90,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 /* Routes */
 app.use('/', indexRouter);
+app.use('/auth', authRouter);
 
 /* Not Found Error */
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -117,6 +119,4 @@ app.use((err: IError, req: Request, res: Response, next: NextFunction) => {
     res.status(status).json({ message });
 });
 
-app.listen(env.APP_PORT, () => {
-    logger.info(`Listening on ${env.APP_PORT}`);
-});
+export default app;

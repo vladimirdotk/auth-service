@@ -1,7 +1,7 @@
 import { Document, Schema, Model, model } from 'mongoose';
 import { IRole } from './../interfaces/role';
 
-export interface IUserModel extends IRole, Document{}
+export interface IRoleModel extends IRole, Document{}
 
 const roleSchema = new Schema({
     name: {
@@ -12,4 +12,4 @@ const roleSchema = new Schema({
 // tslint:disable-next-line: align
 }, { timestamps: true });
 
-export const Role: Model<IUserModel> = model<IUserModel>('Role', roleSchema);
+export const Role: Model<IRoleModel> = model<IRoleModel>('Role', roleSchema);

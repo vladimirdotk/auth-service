@@ -26,6 +26,7 @@ import { serialize, deserialize } from './serializers/userSerializer';
 
 import indexRouter from './routes/index';
 import authRouter from './routes/auth';
+import roleRouter from './routes/role';
 
 dotenv.config();
 
@@ -91,6 +92,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /* Routes */
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
+app.use('/roles', roleRouter);
 
 /* Not Found Error */
 app.use((req: Request, res: Response, next: NextFunction) => {

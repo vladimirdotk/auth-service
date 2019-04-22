@@ -7,10 +7,10 @@ export default class AuthController {
         const { name, email, password } = req.body;
         try {
             const user = await createUser({ name, email, password });
-            logger.debug(`Created user ${user.id}`)
+            logger.debug(`Created user ${user.id}`);
             res.end(`Succsess! user.id: ${user.id}`);
         } catch (err) {
-            logger.error(`Error signing up user ${name} ${email}: ${err}`)
+            logger.error(`Error signing up user ${name} ${email}: ${err}`);
             res.status(500).send();
         }
     }

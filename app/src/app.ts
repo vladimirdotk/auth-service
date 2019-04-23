@@ -28,6 +28,7 @@ import indexRouter from './routes/index';
 import authRouter from './routes/auth';
 import roleRouter from './routes/role';
 import userRouter from './routes/user';
+import userRoleRouter from './routes/user-role';
 
 dotenv.config();
 
@@ -95,6 +96,7 @@ app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/roles', roleRouter);
 app.use('/users', userRouter);
+app.use('/user-roles', userRoleRouter);
 
 /* Not Found Error */
 app.use((req: Request, res: Response, next: NextFunction) => {

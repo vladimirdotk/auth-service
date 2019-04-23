@@ -1,9 +1,7 @@
 import app from './../src/app';
 import * as request from 'supertest';
 import { connection } from 'mongoose';
-import { getRandomName } from './../src/utils';
 import { createUser, deleteUser, createRole, deleteRole } from './helper';
-import { IUser } from '../src/interfaces/user';
 import { IRoleModel } from '../src/models/Role';
 
 describe('User Roles', () => {

@@ -29,6 +29,7 @@ import authRouter from './routes/auth';
 import roleRouter from './routes/role';
 import userRouter from './routes/user';
 import userRoleRouter from './routes/user-role';
+import userSessionRouter from './routes/user-session';
 
 dotenv.config();
 
@@ -97,6 +98,7 @@ app.use('/auth', authRouter);
 app.use('/roles', roleRouter);
 app.use('/users', userRouter);
 app.use('/user-roles', userRoleRouter);
+app.use('/user-sessions', userSessionRouter);
 
 /* Not Found Error */
 app.use((req: Request, res: Response, next: NextFunction) => {

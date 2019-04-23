@@ -1,9 +1,8 @@
 import { getRandomName } from './../src/utils';
 import { Role, IRoleModel } from './../src/models/Role';
 import { UserModel, createUser as createOne, IUserModel } from './../src/models/User';
-import { Session } from './../src/models/Session';
+import { Session, ISessionModel } from './../src/models/Session';
 import { IUser } from './../src/interfaces/user';
-import { ISession } from '../src/interfaces/session';
 
 export const createRole = async (): Promise<IRoleModel> => {
     return await Role.create({ name: getRandomName() });
@@ -26,7 +25,7 @@ export const deleteUser = async (userId: string) => {
     UserModel.findByIdAndDelete({ _id: userId });
 };
 
-export const createSession = async (userId: string): Promise<ISession> => {
+export const createSession = async (userId: string): Promise<ISessionModel> => {
     return Session.create({
         expires: new Date(),
         session: userId,

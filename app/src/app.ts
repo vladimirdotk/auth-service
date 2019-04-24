@@ -3,7 +3,6 @@ import express = require('express');
 import path = require('path');
 import dotenv = require('dotenv');
 import createError = require('http-errors');
-import mongoose = require('mongoose');
 import bodyParser = require('body-parser');
 import cookieParser = require('cookie-parser');
 import session = require('express-session');
@@ -34,17 +33,17 @@ import userSessionRouter from './routes/user-session';
 import swaggerJSDoc from './components/swagger';
 import * as swaggerUi from 'swagger-ui-express';
 
+const config = require('./../knexfile')['development'];
+const knex = require('knex')(config);
+
+// tslint:disable-next-line: variable-name
+const KnexSessionStore = require('connect-session-knex')(session);
+
 dotenv.config();
 
 const app = express();
 
 const { env } = process;
-
-/* Mongo setup */
-// tslint:disable-next-line: max-line-length
-const mongoConnectionString = `mongodb://${env.MONGO_USER}:${env.MONGO_PASSWORD}@${env.MONGO_HOST}:${env.MONGO_PORT}/${env.MONGO_DB}`;
-mongoose.connect(mongoConnectionString, { useNewUrlParser: true });
-const mongoStore = require('connect-mongo')(session);
 
 /* View engine setup */
 app.set('views', path.join(__dirname, 'views'));
@@ -60,7 +59,9 @@ app.use(session({
     secret: env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: true,
-    store: new mongoStore({ mongooseConnection: mongoose.connection }),
+    store: new KnexSessionStore({
+        knex,
+    }),
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -102,11 +103,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 /* Routes */
 app.use('/', indexRouter);
-app.use('/auth', authRouter);
-app.use('/roles', roleRouter);
-app.use('/users', userRouter);
-app.use('/user-roles', userRoleRouter);
-app.use('/user-sessions', userSessionRouter);
+// app.use('/auth', authRouter);
+// app.use('/roles', roleRouter);
+// app.use('/users', userRouter);
+// app.use('/user-roles', userRoleRouter);
+// app.use('/user-sessions', userSessionRouter);
 
 /* Not Found Error */
 app.use((req: Request, res: Response, next: NextFunction) => {

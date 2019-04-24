@@ -1,22 +1,13 @@
-import { Document, Schema, Model, model } from 'mongoose';
+import { Model } from 'objection';
 
 export interface ISession {
-    expires: Date;
-    session: string;
+    expired: Date;
+    sid: string;
+    sess: string;
 }
 
-export interface ISessionModel extends ISession, Document{}
-
-const sessionSchema = new Schema({
-    expires: {
-        type: Date,
-        required: true,
-    },
-    session: {
-        type: String,
-        required: true,
-    },
-// tslint:disable-next-line: align
-}, { timestamps: true });
-
-export const Session: Model<ISessionModel> = model<ISessionModel>('Session', sessionSchema);
+export class Session extends Model {
+    static get tableName() {
+        return 'sessions';
+    }
+}

@@ -6,6 +6,6 @@ export interface IRole {
 
 export class Role extends Model {
     static get tableName() {
-        return 'roles';
+        return 'user_roles';
     }
 }

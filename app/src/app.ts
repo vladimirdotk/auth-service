@@ -14,15 +14,15 @@ import { INTERNAL_SERVER_ERROR, getStatusText } from 'http-status-codes';
 import passportLocal = require('passport-local');
 import passportGithub = require('passport-github2');
 import passportGoogle = require('passport-google-oauth20');
-import * as userLocalStrategy from './strategies/userLocalStrategy';
-import * as userGithubStrategy from './strategies/userGithubStrategy';
-import * as userGoogleStrategy from './strategies/userGoogleStrategy';
+import * as userLocalStrategy from './lib/userLocalStrategy';
+import * as userGithubStrategy from './lib/userGithubStrategy';
+import * as userGoogleStrategy from './lib/userGoogleStrategy';
 
 import { IError } from './interfaces/error';
 
 import logger from './components/logger';
 
-import { serialize, deserialize } from './serializers/userSerializer';
+import { serialize, deserialize } from './lib/userSerializer';
 
 import indexRouter from './routes/index';
 import authRouter from './routes/auth';
@@ -30,6 +30,9 @@ import roleRouter from './routes/role';
 import userRouter from './routes/user';
 import userRoleRouter from './routes/user-role';
 import userSessionRouter from './routes/user-session';
+
+import swaggerJSDoc from './components/swagger';
+import * as swaggerUi from 'swagger-ui-express';
 
 dotenv.config();
 
@@ -88,6 +91,11 @@ passport.use(new passportGoogle.Strategy(
     },
     userGoogleStrategy.strategy,
 ));
+
+/* Swagger */
+if (app.get('env') !== 'production') {
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc));
+}
 
 /* Serve static */
 app.use(express.static(path.join(__dirname, 'public')));

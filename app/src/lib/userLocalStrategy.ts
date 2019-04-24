@@ -1,4 +1,4 @@
-import { UserModel, IUserModel, comparePassword } from './../models/User';
+import { UserModel, IUserModel, comparePassword } from '../models/User';
 import { IVerifyOptions } from 'passport-local';
 
 // tslint:disable-next-line: max-line-length
@@ -7,7 +7,7 @@ export const strategy = async (email: string, password: string, done: (err: any,
     try {
         user = await UserModel.findOne({ email });
         if (!user) {
-            return done(null, false, {message: 'Unknown User'});
+            return done(null, false, { message: 'Unknown User' });
         }
     } catch (err) {
         return done(err);

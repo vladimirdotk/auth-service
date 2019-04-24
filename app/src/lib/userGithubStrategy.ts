@@ -1,4 +1,4 @@
-import { UserModel, IUserModel } from './../models/User';
+import { UserModel, IUserModel } from '../models/User';
 import { Profile } from 'passport';
 import { VerifyCallback, VerifyFunctionWithRequest } from 'passport-oauth2';
 import { Request } from 'express';

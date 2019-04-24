@@ -21,9 +21,8 @@ describe('Change user data', () => {
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .expect(200);
-
         const result = JSON.parse(confirmResponse.text);
-        expect(result.name).toEqual(testName);
+        expect(result.user.name).toEqual(testName);
 
         return deleteUser(user._id);
     });

@@ -1,4 +1,4 @@
-import { UserModel, IUserModel } from './../models/User';
+import { UserModel, IUserModel } from '../models/User';
 import { Profile } from 'passport';
 import { VerifyCallback } from 'passport-google-oauth20';
 
@@ -26,7 +26,7 @@ export const strategy = async (accessToken: string, refreshToken: string, profil
             };
             const googleUser = await UserModel.create(userData);
             return done(null, googleUser);
-        } catch(err) {
+        } catch (err) {
             return done(err);
         }
     }

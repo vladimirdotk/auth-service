@@ -1,7 +1,16 @@
 import { Document, Schema, Model, model } from 'mongoose';
 import bcrypt = require('bcrypt');
-import { IUser } from './../interfaces/user';
 import { Role } from './../models/Role';
+
+export interface IUser {
+    name?: string;
+    email?: string;
+    password?: string;
+    githubId?: string;
+    googleId?: string;
+    roles?: string[] | [];
+    confirmCode?: string;
+}
 
 export interface IUserModel extends IUser, Document{}
 

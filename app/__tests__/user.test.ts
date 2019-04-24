@@ -3,7 +3,7 @@ import * as request from 'supertest';
 import { connection } from 'mongoose';
 import { getRandomName } from './../src/utils';
 import { createUser, deleteUser } from './helper';
-import { IUser } from '../src/interfaces/user';
+import { IUser } from '../src/models/User';
 
 describe('User', () => {
     it('fethes users', async () => {

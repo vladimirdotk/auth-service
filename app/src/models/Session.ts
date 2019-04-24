@@ -1,5 +1,9 @@
 import { Document, Schema, Model, model } from 'mongoose';
-import { ISession } from './../interfaces/session';
+
+export interface ISession {
+    expires: Date;
+    session: string;
+}
 
 export interface ISessionModel extends ISession, Document{}
 

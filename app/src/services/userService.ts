@@ -1,10 +1,9 @@
 import url = require('url');
 import { NOT_FOUND } from 'http-status-codes';
 import { getRandomName } from './../utils';
-import { UserModel, IUserModel, createUser } from './../models/User';
+import { IUser, UserModel, IUserModel, createUser } from './../models/User';
 import * as mailService from './../services/mailService';
 import { IError } from './../interfaces/error';
-import { IUser } from '../interfaces/user';
 
 interface IUserData {
     userId: IUserModel['id'];

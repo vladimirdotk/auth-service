@@ -1,8 +1,7 @@
 import { getRandomName } from './../src/utils';
 import { Role, IRoleModel } from './../src/models/Role';
-import { UserModel, createUser as createOne, IUserModel } from './../src/models/User';
+import { IUser, UserModel, createUser as createOne, IUserModel } from './../src/models/User';
 import { Session, ISessionModel } from './../src/models/Session';
-import { IUser } from './../src/interfaces/user';
 
 export const createRole = async (): Promise<IRoleModel> => {
     return await Role.create({ name: getRandomName() });

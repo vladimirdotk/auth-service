@@ -1,5 +1,8 @@
 import { Document, Schema, Model, model } from 'mongoose';
-import { IRole } from './../interfaces/role';
+
+export interface IRole {
+    name: string;
+}
 
 export interface IRoleModel extends IRole, Document{}
 

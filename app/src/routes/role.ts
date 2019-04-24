@@ -2,9 +2,11 @@ import express = require('express');
 import { validate } from './../middleware/validator';
 import addRoleValidator from './../validators/addRole';
 import deleteRoleValidator from './../validators/deleteRole';
-import roleController from './../controllers/roleController';
+import RoleController from './../controllers/roleController';
 
 const router = express.Router();
+
+const roleController = new RoleController();
 
 /**
  * @swagger

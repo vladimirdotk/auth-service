@@ -1,29 +1,35 @@
 import { Request, Response, NextFunction } from 'express';
-import userService from './../services/userService';
+import UserService from './../services/userService';
 import logger from './../components/logger';
 
 export default class UserController {
-    static async getUsers(req: Request, res: Response, next: NextFunction) {
+    private userService: UserService;
+
+    constructor() {
+        this.userService = new UserService();
+    }
+
+    public getUsers = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            res.json(await userService.getAll());
+            res.json(await this.userService.getAll());
         } catch (err) {
             logger.error(`Error geting users: ${err}`);
             next(err);
         }
     }
 
-    static async getUserById(req: Request, res: Response, next: NextFunction) {
+    public getUserById = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            res.json(await userService.getById(req.params.userId));
+            res.json(await this.userService.getById(req.params.userId));
         } catch (err) {
             logger.error(`Error geting user with id ${req.params.userId}: ${err}`);
             next(err);
         }
     }
 
-    static async createUser(req: Request, res: Response, next: NextFunction) {
+    public createUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const user = await userService.create(req.body);
+            const user = await this.userService.create(req.body);
             res.status(201).json(user);
         } catch (err) {
             logger.error(`Error creating user: ${err}`);
@@ -31,9 +37,9 @@ export default class UserController {
         }
     }
 
-    static async deleteUser(req: Request, res: Response, next: NextFunction) {
+    public deleteUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            await userService.removeById(req.params.userId);
+            await this.userService.removeById(req.params.userId);
             res.json({ message: 'user deleted' });
         } catch (err) {
             logger.error(`Error deleting user with id ${req.params.userId}: ${err}`);
@@ -41,9 +47,9 @@ export default class UserController {
         }
     }
 
-    static async changeUser(req: Request, res: Response, next: NextFunction) {
+    public changeUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const confirmUrl = await userService.changeUser({
+            const confirmUrl = await this.userService.changeUser({
                 userId: req.params.userId,
                 protocol: req.protocol,
                 hostname: req.hostname,
@@ -59,9 +65,9 @@ export default class UserController {
         }
     }
 
-    static async confirmChanges(req: Request, res: Response, next: NextFunction) {
+    public confirmChanges = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const user = await userService.confirmChanges({
+            const user = await this.userService.confirmChanges({
                 userId: req.params.userId,
                 userData: req.query,
             });

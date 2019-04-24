@@ -1,10 +1,13 @@
 import express = require('express');
-import userRolesController from './../controllers/userRolesController';
+import UserRolesController from './../controllers/userRolesController';
 import { validate } from './../middleware/validator';
 import getUserRolesValidator from './../validators/getUserRoles';
 import manipulateUserRoleValidator from './../validators/manipulateUserRole';
 
 const router = express.Router();
+
+const userRolesController = new UserRolesController();
+
 /**
  * @swagger
  *

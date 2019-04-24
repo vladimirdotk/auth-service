@@ -2,9 +2,11 @@ import express = require('express');
 import { validate } from '../middleware/validator';
 import userExists from '../validators/userExists';
 import userSession from '../validators/userSession';
-import userSessionController from '../controllers/userSessionsController';
+import UserSessionController from '../controllers/userSessionsController';
 
 const router = express.Router();
+
+const userSessionController = new UserSessionController();
 
 /**
  * @swagger

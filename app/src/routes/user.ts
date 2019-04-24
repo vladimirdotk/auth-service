@@ -1,5 +1,5 @@
 import express = require('express');
-import userController from './../controllers/userController';
+import UserController from './../controllers/userController';
 import { validate } from './../middleware/validator';
 import userExistsValidator from './../validators/userExists';
 import createUserValidator from './../validators/createUser';
@@ -7,6 +7,8 @@ import changeUserValidator from './../validators/changeUser';
 import confirmValidator from './../validators/confirmChangeUser';
 
 const router = express.Router();
+
+const userController = new UserController();
 
 /**
  * @swagger

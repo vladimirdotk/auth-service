@@ -15,29 +15,29 @@ interface IUserData {
 }
 
 export default class UserService {
-    static confirmText = 'Please confirm user data changes';
+    public readonly confirmText = 'Please confirm user data changes';
 
-    static async getAll(): Promise<IUserModel[]> {
+    public async getAll(): Promise<IUserModel[]> {
         return UserModel.find();
     }
 
-    static async getById(userId: IUserModel['id']): Promise<IUserModel> {
+    public async getById(userId: IUserModel['id']): Promise<IUserModel> {
         const user = await UserModel.findOne({ _id: userId });
         this.checkUser(user);
         return user!;
     }
 
-    static async create(data: IUser): Promise<IUserModel> {
+    public async create(data: IUser): Promise<IUserModel> {
         return createUser(data);
     }
 
-    static async removeById(userId: IUserModel['id']): Promise<IUserModel> {
+    public async removeById(userId: IUserModel['id']): Promise<IUserModel> {
         const user = await UserModel.findById({ _id: userId });
         this.checkUser(user);
         return user!.remove();
     }
 
-    static async changeUser(data: IUserData) {
+    public async changeUser(data: IUserData) {
         const user = await UserModel.findById({ _id: data.userId });
         this.checkUser(user);
         user!.confirmCode = getRandomName();
@@ -48,7 +48,7 @@ export default class UserService {
         return confirmUrl;
     }
 
-    static async confirmChanges(data: Partial<IUserData>) {
+    public async confirmChanges(data: Partial<IUserData>) {
         let user = await UserModel.findById({ _id: data.userId });
         this.checkUser(user);
         user = Object.assign(user, data.userData, { confirmCode: null });
@@ -56,7 +56,7 @@ export default class UserService {
         return user;
     }
 
-    private static checkUser(user: IUserModel | null) {
+    private checkUser(user: IUserModel | null) {
         if (!user) {
             const error: IError = new Error('User not found');
             error.status = NOT_FOUND;
@@ -64,7 +64,7 @@ export default class UserService {
         }
     }
 
-    private static createConfirmUrl(data: IUserData) {
+    private createConfirmUrl(data: IUserData) {
         return url.format({
             protocol: data.protocol,
             hostname: data.hostname,
@@ -74,7 +74,7 @@ export default class UserService {
         });
     }
 
-    private static createConfirmMailOptions(email: string, confirmUrl: string) {
+    private createConfirmMailOptions(email: string, confirmUrl: string) {
         return {
             from: process.env.MAILER_EMAIL,
             to: email,

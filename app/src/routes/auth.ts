@@ -2,13 +2,15 @@ import express = require('express');
 import passport = require('passport');
 import { validate } from './../middleware/validator';
 import signupValidator from './../validators/signup';
-import authController from './../controllers/authController';
+import AuthController from './../controllers/authController';
 
 const failureRedirect = '/auth/signin';
 const githubOptions = { scope: ['user:email'] };
 const googleOptions = { scope: ['profile', 'email'] };
 
 const router = express.Router();
+
+const authController = new AuthController();
 
 router.get('/signup', authController.showSignUpForm);
 router.post('/signup', validate(signupValidator), authController.signUp);

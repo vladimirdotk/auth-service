@@ -1,19 +1,25 @@
 import logger from './../components/logger';
 import { Request, Response, NextFunction } from 'express';
 import { Role } from './../models/Role';
-import roleService from './../services/roleService';
+import RoleService from './../services/roleService';
 
 export default class RoleController {
-    static async getRoles(req: Request, res: Response, next: NextFunction) {
+    private roleService: RoleService;
+
+    constructor() {
+        this.roleService = new RoleService();
+    }
+
+    public getRoles = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            res.json(await roleService.getAll());
+            res.json(await this.roleService.getAll());
         } catch (err) {
             logger.error(`Error getting roles: ${err}`);
             next(err);
         }
     }
 
-    static async addRole (req: Request, res: Response, next: NextFunction) {
+    public addRole = async (req: Request, res: Response, next: NextFunction) => {
         try {
             res.status(201).json(await Role.create({ name: req.body.name }));
         } catch (err) {
@@ -22,9 +28,9 @@ export default class RoleController {
         }
     }
 
-    static async deleteRole (req: Request, res: Response, next: NextFunction) {
+    public deleteRole = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            await roleService.remove(req.params.roleId);
+            await this.roleService.remove(req.params.roleId);
             res.json({ message: 'success' });
         } catch (err) {
             logger.error(`Error deleting a role: ${err}`);

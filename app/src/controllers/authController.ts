@@ -3,7 +3,7 @@ import logger from './../components/logger';
 import { Request, Response } from 'express';
 
 export default class AuthController {
-    static async signUp(req: Request, res: Response) {
+    public signUp = async (req: Request, res: Response) => {
         const { name, email, password } = req.body;
         try {
             const user = await createUser({ name, email, password });
@@ -15,18 +15,19 @@ export default class AuthController {
         }
     }
 
-    static async showSignUpForm(req: Request, res: Response) {
+    public showSignUpForm = async (req: Request, res: Response) => {
         res.render('signup');
     }
 
-    static async signIn(req: Request, res: Response) {
+    public signIn = async (req: Request, res: Response) => {
         res.end(`Succsess! user.id: ${req.user.id}`);
     }
-    static async showSignInForm(req: Request, res: Response) {
+
+    public showSignInForm = async (req: Request, res: Response) => {
         res.render('signin');
     }
 
-    static async success(req: Request, res: Response) {
+    public success = async (req: Request, res: Response) => {
         res.send('Success!');
     }
 }

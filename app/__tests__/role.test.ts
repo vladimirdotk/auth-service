@@ -1,11 +1,12 @@
 import app from './../src/app';
 import * as request from 'supertest';
-import { connection } from 'mongoose';
 import { getRandomName } from './../src/utils';
-import { createUser, deleteUser, createRole, deleteRole } from './helper';
-import { IRoleModel } from './../src/models/Role';
+import { createRole, transactionPerTest } from './helper';
+import { IRole } from './../src/models/Role';
 
 describe('/roles', () => {
+    transactionPerTest();
+
     it('fetches roles list', async () => {
         const newRole = await createRole();
         const response = await request(app)
@@ -15,9 +16,8 @@ describe('/roles', () => {
             .expect(200);
         const roles = JSON.parse(response.text);
         expect(
-            roles.some((role: IRoleModel): boolean => role.name === newRole.name),
+            roles.some((role: IRole): boolean => role.name === newRole.name),
         ).toBeTruthy();
-        return deleteRole(newRole._id);
     });
 
     describe('adding new role', () => {
@@ -31,7 +31,6 @@ describe('/roles', () => {
                 .expect(201);
             const role = JSON.parse(response.text);
             expect(role.name).toEqual(name);
-            return deleteRole(role._id);
         });
 
         it('fails to add new role (short name)', async () => {
@@ -48,12 +47,11 @@ describe('/roles', () => {
         it('deletes a role', async () => {
             const newRole = await createRole();
             await request(app)
-                .delete(`/roles/${newRole._id}`)
+                .delete(`/roles/${newRole.id}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .expect('{"message":"success"}');
-            await deleteRole(newRole._id);
         });
         it('failes to delete a role', async () => {
             await request(app)
@@ -62,9 +60,5 @@ describe('/roles', () => {
                 .expect('Content-Type', /json/)
                 .expect(422);
         });
-    });
-
-    afterAll(async () => {
-        return connection.close();
     });
 });

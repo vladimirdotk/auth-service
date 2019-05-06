@@ -1,15 +1,23 @@
-import { Role, IRoleModel } from './../models/Role';
+import { Role } from './../models/Role';
 
 export default class RoleService {
-    public async getAll(): Promise<IRoleModel[]> {
-        return Role.find();
+    public async getAll(): Promise<Role[]> {
+        return Role.query();
     }
 
-    public async getOne(name: IRoleModel['name']): Promise<IRoleModel> {
-        return Role.create({ name });
+    public async getOneByName(name: Role['name']): Promise<Role | undefined> {
+        return Role.query().findOne({ name });
     }
 
-    public async remove(roleId: IRoleModel['id']) {
-        Role.findByIdAndRemove({ _id: roleId });
+    public async getById(id: Role['id']): Promise<Role | undefined> {
+        return Role.query().findById(id);
+    }
+
+    public async remove(roleId: Role['id']): Promise<number> {
+        return Role.query().deleteById(roleId);
+    }
+
+    public async create(name: Role['name']): Promise<Role> {
+        return Role.query().insert({ name });
     }
 }

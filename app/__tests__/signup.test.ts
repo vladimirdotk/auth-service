@@ -1,9 +1,11 @@
 import app from './../src/app';
 import * as request from 'supertest';
-import { connection } from 'mongoose';
 import { getRandomName } from './../src/utils';
+import { transactionPerTest } from './helper';
 
 describe('Sign up page', () => {
+    transactionPerTest();
+
     it('renders sign up page', async () => {
         const response = await request(app).get('/auth/signup');
         expect(response.status).toEqual(200);
@@ -21,7 +23,7 @@ describe('Sign up page', () => {
                 email: `${getRandomName()}@test.ru`,
                 name: getRandomName(),
             });
-        expect(response.text).toMatch(/Succsess!/);
+        expect(response.text).toMatch(/Success!/);
     });
 
     it('fails to signup with incorrect email', async () => {
@@ -41,9 +43,5 @@ describe('Sign up page', () => {
         const { message } = result;
         expect(message.length).toEqual(1);
         expect(message[0].param).toMatch('email');
-    });
-
-    afterAll(async () => {
-        return connection.close();
     });
 });

@@ -1,10 +1,11 @@
 import app from './../src/app';
 import * as request from 'supertest';
-import { connection } from 'mongoose';
 import { getRandomName } from './../src/utils';
-import { createUser, deleteUser } from './helper';
+import { createUser, transactionPerTest } from './helper';
 
 describe('Sign in page', () => {
+    transactionPerTest();
+
     it('renders sign in page', async () => {
         const response = await request(app).get('/auth/signin');
         expect(response.status).toEqual(200);
@@ -23,10 +24,5 @@ describe('Sign in page', () => {
             })
             .expect(200);
         expect(response.text).toMatch(/Succsess!/);
-        return deleteUser(user._id);
-    });
-
-    afterAll(async () => {
-        return connection.close();
     });
 });

@@ -1,13 +1,15 @@
 import { query, param } from 'express-validator/check';
-import { UserModel } from './../models/User';
+import UserService from './../services/userService';
+
+const userService = new UserService();
 
 export default [
     param('userId', 'User must exists')
-        .custom(async (value: string) => await UserModel.findById({ _id: value }) !== null),
+        .custom(async (value: number) => await userService.getById(value)),
     query('confirmCode', 'Bad confirmation code')
         .custom(async (value, { req }) => {
-            const user = await UserModel.findById({ _id: req.params.userId });
-            return user && user.confirmCode === value;
+            const user = await userService.getById(req.params.userId);
+            return user.confirmCode === value;
         }),
     query('name')
         .optional()

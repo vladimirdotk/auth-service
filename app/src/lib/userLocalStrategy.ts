@@ -1,11 +1,13 @@
-import { UserModel, IUserModel, comparePassword } from '../models/User';
+import { User, IUser } from '../models/User';
+import UserService from '../services/userService';
 import { IVerifyOptions } from 'passport-local';
 
 // tslint:disable-next-line: max-line-length
 export const strategy = async (email: string, password: string, done: (err: any, user?: any, options?: IVerifyOptions) => void) => {
-    let user: IUserModel | null;
+    const userService = new UserService();
+    let user: IUser | undefined;
     try {
-        user = await UserModel.findOne({ email });
+        user = await userService.findOne({ email });
         if (!user) {
             return done(null, false, { message: 'Unknown User' });
         }
@@ -14,7 +16,7 @@ export const strategy = async (email: string, password: string, done: (err: any,
     }
 
     try {
-        const match = await comparePassword(password, user.password!);
+        const match = await userService.comparePassword(password, user.password!);
         if (!match) {
             return done(null, false, { message: 'Invalid password' });
         }

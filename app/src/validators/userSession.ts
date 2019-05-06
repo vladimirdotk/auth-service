@@ -1,10 +1,13 @@
 import { param } from 'express-validator/check';
-import { UserModel } from './../models/User';
-import { Session } from './../models/Session';
+import UserService from './../services/userService';
+import SessionService from './../services/userSessionService';
+
+const userService = new UserService();
+const sessionService = new SessionService();
 
 export default [
     param('userId', 'User must exists')
-        .custom(async (value: string) => await UserModel.findById({ _id: value }) !== null),
+        .custom(async (value: number) => await userService.getById(value)),
     param('sessionId', 'Session must exists')
-        .custom(async (value: string) => await Session.findById({ _id: value }) !== null),
+        .custom(async (value: string) => await sessionService.getOne(value)),
 ];

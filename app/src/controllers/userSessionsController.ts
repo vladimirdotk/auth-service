@@ -20,7 +20,7 @@ export default class UserSessionsContorller {
 
     public getOne = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const session = await this.userSessionService.getOne(req.params.userId, req.params.sessionId);
+            const session = await this.userSessionService.getOne(req.params.sessionId);
             res.status(200).json(session);
         } catch (err) {
             logger.error(`Error getting session ${req.params.sessionId} by user ${req.params.userId}`);
@@ -30,7 +30,7 @@ export default class UserSessionsContorller {
 
     public removeOne = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            await this.userSessionService.removeOne(req.params.userId, req.params.sessionId);
+            await this.userSessionService.removeOne(req.params.sessionId);
             res.json({ message : 'success' });
         } catch (err) {
             logger.error(`Error deleting session ${req.params.sessionId} by userId ${req.params.userId}`);
@@ -40,7 +40,7 @@ export default class UserSessionsContorller {
 
     public removeAll = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            await this.userSessionService.removeAll(req.params.userId);
+            const nums = this.userSessionService.removeAll(req.params.userId);
             res.json({ message : 'success' });
         } catch (err) {
             logger.error(`Error deleting sessions by userId ${req.params.userId}`);

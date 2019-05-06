@@ -1,9 +1,11 @@
 import { body, param } from 'express-validator/check';
-import { UserModel } from './../models/User';
+import UserService from './../services/userService';
+
+const userService = new UserService();
 
 export default [
     param('userId', 'User must exists')
-        .custom(async (value: string) => await UserModel.findById({ _id: value }) !== null),
+        .custom(async (value: number) => await userService.getById(value)),
     body('name')
         .optional()
         .isLength({ min: 7, max: 50 })

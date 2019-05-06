@@ -1,15 +1,16 @@
 import app from './../src/app';
 import * as request from 'supertest';
 import url = require('url');
-import { connection } from 'mongoose';
-import { createUser, deleteUser } from './helper';
+import { createUser, transactionPerTest } from './helper';
 
 describe('Change user data', () => {
+    transactionPerTest();
+
     it('changes name', async () => {
         const user = await createUser();
         const testName = 'TestName';
         const response = await request(app)
-            .patch(`/users/${user._id}`)
+            .patch(`/users/${user.id}`)
             .set('Accept', 'application/json')
             .send({ name: testName })
             .expect('Content-Type', /json/)
@@ -23,10 +24,5 @@ describe('Change user data', () => {
             .expect(200);
         const result = JSON.parse(confirmResponse.text);
         expect(result.user.name).toEqual(testName);
-
-        return deleteUser(user._id);
-    });
-    afterAll(async () => {
-        await connection.close();
     });
 });

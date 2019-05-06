@@ -6,8 +6,16 @@ export interface ISession {
     sess: string;
 }
 
-export class Session extends Model {
+export class Session extends Model implements ISession {
+    expired: Date;
+    sid: string;
+    sess: string;
+
     static get tableName() {
         return 'sessions';
+    }
+
+    static get idColumn() {
+        return 'sid';
     }
 }

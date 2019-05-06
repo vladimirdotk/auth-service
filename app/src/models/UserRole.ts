@@ -1,11 +1,17 @@
 import { Model } from 'objection';
 
-export interface IRole {
-    name: string;
+export interface IUserRole {
+    id?: number;
+    userId: number;
+    roleId: number;
 }
 
-export class Role extends Model {
+export default class UserRole extends Model implements IUserRole {
+    id?: number;
+    userId: number;
+    roleId: number;
+
     static get tableName() {
-        return 'user_roles';
+        return 'userRoles';
     }
 }

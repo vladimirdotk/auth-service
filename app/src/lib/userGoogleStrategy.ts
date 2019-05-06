@@ -1,4 +1,5 @@
-import { UserModel, IUserModel } from '../models/User';
+import { IUser } from '../models/User';
+import UserService from '../services/userService';
 import { Profile } from 'passport';
 import { VerifyCallback } from 'passport-google-oauth20';
 
@@ -10,9 +11,10 @@ interface IUserData {
 
 // tslint:disable-next-line: max-line-length
 export const strategy = async (accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback) => {
-    let user: IUserModel | null;
+    const userService = new UserService();
+    let user: IUser | undefined;
     try {
-        user = await UserModel.findOne({ githubId: profile.id });
+        user = await userService.findOne({ githubId: profile.id });
     } catch (err) {
         return done(err);
     }
@@ -24,7 +26,7 @@ export const strategy = async (accessToken: string, refreshToken: string, profil
                 email: profile.emails ? profile.emails[0].value : undefined,
                 name: profile.name ? profile.name.givenName : undefined,
             };
-            const googleUser = await UserModel.create(userData);
+            const googleUser = await userService.create(userData);
             return done(null, googleUser);
         } catch (err) {
             return done(err);

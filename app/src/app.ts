@@ -33,8 +33,10 @@ import userSessionRouter from './routes/user-session';
 import swaggerJSDoc from './components/swagger';
 import * as swaggerUi from 'swagger-ui-express';
 
+const { Model, knexSnakeCaseMappers } = require('objection');
 const config = require('./../knexfile')['development'];
-const knex = require('knex')(config);
+const knex = require('knex')({ ...config, ...knexSnakeCaseMappers() });
+Model.knex(knex);
 
 // tslint:disable-next-line: variable-name
 const KnexSessionStore = require('connect-session-knex')(session);
@@ -103,11 +105,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 /* Routes */
 app.use('/', indexRouter);
-// app.use('/auth', authRouter);
-// app.use('/roles', roleRouter);
-// app.use('/users', userRouter);
-// app.use('/user-roles', userRoleRouter);
-// app.use('/user-sessions', userSessionRouter);
+app.use('/auth', authRouter);
+app.use('/roles', roleRouter);
+app.use('/users', userRouter);
+app.use('/user-roles', userRoleRouter);
+app.use('/user-sessions', userSessionRouter);
 
 /* Not Found Error */
 app.use((req: Request, res: Response, next: NextFunction) => {

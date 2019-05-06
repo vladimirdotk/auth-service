@@ -1,11 +1,14 @@
-import { UserModel, IUserModel } from './../models/User';
+import { IUser } from './../models/User';
+import UserService from '../services/userService';
 
-export const serialize = (user: IUserModel, done: (err: any, id?: IUserModel['id']) => void) => {
+const userService = new UserService();
+
+export const serialize = (user: IUser, done: (err: any, id?: IUser['id']) => void) => {
     done(null, user.id);
 };
 
-export const deserialize = (id: IUserModel['id'], done: (err: any, user?: IUserModel) => void) => {
-    UserModel.findById(id, (err, user: IUserModel) => {
-        done(err, user);
-    });
+export const deserialize = (id: IUser['id'], done: (err: any, user?: IUser) => void) => {
+    userService.getById(id)
+        .then(user => done(null, user))
+        .catch(err => done(err, undefined));
 };

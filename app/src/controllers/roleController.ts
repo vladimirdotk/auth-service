@@ -1,6 +1,5 @@
 import logger from './../components/logger';
 import { Request, Response, NextFunction } from 'express';
-import { Role } from './../models/Role';
 import RoleService from './../services/roleService';
 
 export default class RoleController {
@@ -21,7 +20,7 @@ export default class RoleController {
 
     public addRole = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            res.status(201).json(await Role.create({ name: req.body.name }));
+            res.status(201).json(await this.roleService.create(req.body.name));
         } catch (err) {
             logger.error(`Error creating a role: ${err}`);
             next(err);

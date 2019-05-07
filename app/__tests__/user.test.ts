@@ -1,11 +1,12 @@
 import app from './../src/app';
 import * as request from 'supertest';
-import { connection } from 'mongoose';
 import { getRandomName } from './../src/utils';
-import { createUser, deleteUser } from './helper';
+import { createUser, transactionPerTest } from './helper';
 import { IUser } from '../src/models/User';
 
 describe('User', () => {
+    transactionPerTest();
+
     it('fethes users', async () => {
         const newUser = await createUser();
         const response = await request(app)
@@ -17,15 +18,13 @@ describe('User', () => {
         const users = JSON.parse(response.text);
         const usersFiltered = users.filter((user: IUser) => user.name === newUser.name);
         expect(usersFiltered.length).toEqual(1);
-
-        return deleteUser(newUser._id);
     });
 
     describe('fetching user', () => {
         it('fetches user by id', async () => {
             const newUser = await createUser();
             const response = await request(app)
-                .get(`/users/${newUser._id}`)
+                .get(`/users/${newUser.id}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200);
@@ -33,7 +32,6 @@ describe('User', () => {
             const user = JSON.parse(response.text);
             expect(user.name).toEqual(newUser.name);
 
-            return deleteUser(newUser._id);
         });
         it('failed to fetch user by id', async () => {
             return request(app)
@@ -59,8 +57,6 @@ describe('User', () => {
             const user = JSON.parse(response.text);
             expect(user.name).toEqual(name);
             expect(user.email).toEqual(email);
-
-            return deleteUser(user._id);
         });
         it('failed to create user', async () => {
             return await request(app)
@@ -76,13 +72,11 @@ describe('User', () => {
         it('deletes user', async () => {
             const newUser = await createUser();
             await request(app)
-                .delete(`/users/${newUser._id}`)
+                .delete(`/users/${newUser.id}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .expect('{"message":"user deleted"}');
-
-            await deleteUser(newUser._id);
         });
         it('failed to delete user', async () => {
             return request(app)
@@ -91,9 +85,5 @@ describe('User', () => {
                 .expect('Content-Type', /json/)
                 .expect(422);
         });
-    });
-
-    afterAll(async () => {
-        return connection.close();
     });
 });

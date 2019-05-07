@@ -23,7 +23,7 @@ export default class UserSessionService {
         return Session
             .query()
             .delete()
-            .whereJsonSupersetOf('sess', { passport: { user : userId } });
+            .where(ref('sessions.sess:passport.user').castText(), userId!.toString());
     }
 
     public async removeOne(sessionId: Session['sid']) {

@@ -30,7 +30,7 @@ const userSessionController = new UserSessionController();
 /**
  * @swagger
  *
- * /user-sessions/user/{userId}/sessions:
+ * /user-sessions/user/{userId}:
  *   get:
  *     description: Get user sessions
  *     tags:
@@ -51,12 +51,12 @@ const userSessionController = new UserSessionController();
  *           items:
  *             $ref: '#/definitions/Session'
  */
-router.get('/user/:userId/sessions', validate(userExists), userSessionController.getAll);
+router.get('/user/:userId', validate(userExists), userSessionController.getAll);
 
 /**
  * @swagger
  *
- * /user-sessions/user/{userId}/sessions/{sessionId}:
+ * /user-sessions/user/{userId}/session/{sessionId}:
  *   get:
  *     description: Get user session
  *     tags:
@@ -80,7 +80,7 @@ router.get('/user/:userId/sessions', validate(userExists), userSessionController
  *         schema:
  *             $ref: '#/definitions/Session'
  */
-router.get('/user/:userId/sessions/:sessionId', validate(userSession), userSessionController.getOne);
+router.get('/user/:userId/session/:sessionId', validate(userSession), userSessionController.getOne);
 
 /**
  * @swagger
@@ -112,7 +112,7 @@ router.delete('/user/:userId/sessions', validate(userExists), userSessionControl
 /**
  * @swagger
  *
- * /user-sessions/user/{userId}/sessions/{sessionId}:
+ * /user-sessions/user/{userId}/session/{sessionId}:
  *   delete:
  *     description: Delete user session
  *     tags:
@@ -139,6 +139,6 @@ router.delete('/user/:userId/sessions', validate(userExists), userSessionControl
  *               message:
  *                  type: string
  */
-router.delete('/user/:userId/sessions/:sessionId', validate(userSession), userSessionController.removeOne);
+router.delete('/user/:userId/session/:sessionId', validate(userSession), userSessionController.removeOne);
 
 export default router;

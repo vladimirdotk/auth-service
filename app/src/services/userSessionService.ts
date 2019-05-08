@@ -43,7 +43,7 @@ export default class UserSessionService {
             });
     }
 
-    private async checkSession(session: Session | undefined) {
+    private checkSession(session: Session | undefined) {
         if (!session) {
             const error: IError = new Error('Session not found');
             error.status = NOT_FOUND;

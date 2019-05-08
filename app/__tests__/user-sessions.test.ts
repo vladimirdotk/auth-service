@@ -10,7 +10,7 @@ describe('User Sessions', () => {
             const user = await createUser();
             const session = await createSession(<number>user.id);
             const response = await request(app)
-                .get(`/user-sessions/user/${user.id}/sessions`)
+                .get(`/user-sessions/user/${user.id}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200);
@@ -20,7 +20,7 @@ describe('User Sessions', () => {
 
         it('failed to fetch user sessions', async () => {
             return request(app)
-                .get('/user-sessions/user/fakeUser/sessions')
+                .get('/user-sessions/user/fakeUser')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(422);
@@ -32,7 +32,7 @@ describe('User Sessions', () => {
             const user = await createUser();
             const session = await createSession(<number>user.id);
             const response = await request(app)
-                .get(`/user-sessions/user/${user.id}/sessions/${session.sid}`)
+                .get(`/user-sessions/user/${user.id}/session/${session.sid}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200);
@@ -41,7 +41,7 @@ describe('User Sessions', () => {
         });
         it('failed to fetch user session', async () => {
             return request(app)
-                .get('/user-sessions/user/fakeUser/sessions/fakeSession')
+                .get('/user-sessions/user/fakeUser/session/fakeSession')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(422);
@@ -74,7 +74,7 @@ describe('User Sessions', () => {
             const user = await createUser();
             const session = await createSession(<number>user.id);
             const response = await request(app)
-                .delete(`/user-sessions/user/${user.id}/sessions/${session.sid}`)
+                .delete(`/user-sessions/user/${user.id}/session/${session.sid}`)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200);
@@ -83,7 +83,7 @@ describe('User Sessions', () => {
         });
         it('failed to delete user session', async () => {
             return request(app)
-                .delete('/user-sessions/user/fakeUser/sessions/fakeSession')
+                .delete('/user-sessions/user/fakeUser/session/fakeSession')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(422);

@@ -7,7 +7,7 @@ services:
     restart: always
     working_dir: /usr/src/app
     volumes:
-      - ./app:/usr/src/app
+      - ./app/src:/usr/src/app/src
       - /usr/src/app/node_modules
     ports:
       - 3000:3000
@@ -16,6 +16,16 @@ services:
       - db
       - adminer
   
+  migrate:
+    build: .
+    working_dir: /usr/src/app
+    volumes:
+      - ./app:/usr/src/app
+      - /usr/src/app/node_modules
+    command: "npm run knex migrate:latest"
+    depends_on:
+      - db
+
   app-test:
     build: .
     restart: always

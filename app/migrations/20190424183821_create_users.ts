@@ -6,9 +6,9 @@ export const up = (knex: knex, Promise: Promise<any>): knex.SchemaBuilder => {
         table.string('name').notNullable();
         table.string('email');
         table.string('password');
-        table.string('githubId');
-        table.string('googleId');
-        table.string('confirmCode');
+        table.string('github_id');
+        table.string('google_id');
+        table.string('confirm_code');
     });
 };
 
